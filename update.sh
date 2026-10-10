@@ -7,7 +7,8 @@
 set -e
 
 echo "🚀 [1/4] Menarik perubahan terbaru dari GitHub..."
-git pull origin main || git pull origin master
+git fetch origin main
+git reset --hard origin/main
 
 echo "📦 [2/4] Memeriksa & menginstal dependensi npm..."
 npm install --omit=dev
