@@ -306,6 +306,26 @@ Untuk menjamin keamanan pemakaian jangka panjang dan bebas blokir IP:
 
 ---
 
+### 28. 📱💻 Adaptive Mobile (HP) & Desktop/Laptop Responsive Design Engine
+- **Tujuan:** Memastikan aplikasi tampil sempurna, proporsional, dan nyaman digunakan baik di layar smartphone (HP Android/iPhone), tablet, maupun PC/laptop monitor besar.
+- **Implementasi Desain Responsif Komprehensif:**
+  1. **Mode PC / Laptop (Desktop View):**
+     - Layout melebar otomatis hingga `1160px` saat mode Winamp aktif (`.container.winamp-expanded`), menampilkan jendela Playlist dan Lirik Lagu Karaoke berdampingan (*split view*) secara proporsional.
+     - Navigasi tab horizontal elegan, grid kartu pencarian YouTube dengan thumbnail di kiri dan tombol aksi cepat (*⚡ MP3 / 🎬 Video*) di kanan.
+  2. **Mode HP / Smartphone (Mobile View - Breakpoint <= 768px & <= 600px):**
+     - **Mode Navigation Switcher:** Otomatis ditata menjadi **Grid 2x2** yang proporsional dan mudah ditekan (*touch-friendly*) dengan jempol pada layar sentuh ponsel.
+     - **Top Action Bar:** Menjadi vertikal terpusat sehingga tag status engine dan tombol pengaturan tidak bertumpuk atau terpotong.
+     - **Hasil Pencarian YouTube:** Menyesuaikan ke tata letak vertikal (thumbnail 16:9 penuh, informasi durasi/views, dan tombol unduh berukuran penuh di bawahnya).
+     - **Sasis Pemutar Winamp:**
+       - Spectrum analyzer visualizer responsif `100%` mengikuti lebar layar ponsel.
+       - Barisan tombol pemutar (Prev, Play, Pause, Stop, Next, Shuffle, Repeat, Karaoke, HQ) tertata seimbang di tengah dengan touch-target nyaman.
+       - Slider volume memenuhi lebar kontrol di bawah tombol.
+     - **Jendela Lirik Karaoke & Playlist:** Otomatis beralih menjadi 1 kolom vertikal (stack) atau dapat dialihkan dengan tab switcher (*Lirik Saja / Playlist Saja*) dengan ketinggian viewport yang pas (`380px`).
+     - **Riwayat Unduhan (`.bf-item`):** Membungkus judul secara rapi (2 baris teks elipsis) dan deretan tombol aksi (Play, Edit Judul, QR HP, Unduh) tetap leluasa tanpa keluar layar.
+     - **Floating Media Player Drawer & Modal:** Lebar adaptif `95%` layar ponsel dengan posisi floating yang aman dari navigasi browser HP.
+
+---
+
 ## 5. Ringkasan Endpoint API Backend
 
 | Metode | Rute Endpoint | Deskripsi |
