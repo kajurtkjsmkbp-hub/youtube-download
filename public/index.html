@@ -1,0 +1,4147 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Khanza.NET - YT Downloader Pro | YouTube to MP3 & MP4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --bg-primary: #0a0a1a;
+      --bg-secondary: #12122a;
+      --bg-card: rgba(255,255,255,0.04);
+      --glass-bg: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0c0;
+      --text-muted: #6a6a8a;
+      --accent: #7c3aed;
+      --accent2: #a855f7;
+      --accent3: #c084fc;
+      --gradient-1: linear-gradient(135deg, #7c3aed, #ec4899);
+      --gradient-2: linear-gradient(135deg, #3b82f6, #06b6d4);
+      --gradient-green: linear-gradient(135deg, #10b981, #059669);
+      --success: #10b981;
+      --error: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    ::selection{background:var(--accent);color:#fff}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--bg-primary)}
+    ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden;line-height:1.6}
+
+    .bg-animation{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+    .bg-animation .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.25;animation:float 20s ease-in-out infinite}
+    .bg-animation .orb:nth-child(1){width:400px;height:400px;background:#7c3aed;top:-100px;left:-100px}
+    .bg-animation .orb:nth-child(2){width:350px;height:350px;background:#ec4899;bottom:-100px;right:-100px;animation-delay:-5s;animation-duration:25s}
+    .bg-animation .orb:nth-child(3){width:300px;height:300px;background:#3b82f6;top:50%;left:50%;animation-delay:-10s;animation-duration:30s}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(50px,-80px) scale(1.1)}50%{transform:translate(-30px,60px) scale(0.9)}75%{transform:translate(70px,30px) scale(1.05)}}
+
+    .container{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:16px 16px 60px;transition:max-width 0.25s ease}
+    .container.winamp-expanded{max-width:1160px}
+
+    /* Top Action Bar */
+    .top-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;margin-bottom:10px}
+    .engine-status-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:20px;font-size:0.75rem;color:var(--text-secondary)}
+    .status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 10px var(--success)}
+    .status-dot.pulse{animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.2)}}
+
+    .settings-btn{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:20px;color:var(--accent3);font-size:0.78rem;font-weight:600;cursor:pointer;transition:var(--transition);font-family:inherit}
+    .settings-btn:hover{background:rgba(124,58,237,0.3);border-color:var(--accent);color:#fff;transform:translateY(-1px)}
+
+    /* Header */
+    .header{text-align:center;padding:20px 0 24px}
+    .header .logo{display:inline-flex;align-items:center;gap:14px;margin-bottom:10px}
+    .header .logo-icon{width:52px;height:52px;background:var(--gradient-1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 8px 30px rgba(124,58,237,0.4);animation:pulse-glow 3s ease-in-out infinite}
+    @keyframes pulse-glow{0%,100%{box-shadow:0 8px 30px rgba(124,58,237,0.4)}50%{box-shadow:0 8px 50px rgba(124,58,237,0.6)}}
+    .header h1{font-size:1.8rem;font-weight:800;background:var(--gradient-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .header .subtitle{color:var(--text-secondary);font-size:0.9rem;margin-top:4px}
+    .header .badges{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .header .badge{padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+    .badge-mp3{background:rgba(124,58,237,0.2);color:var(--accent3)}
+    .badge-mp4{background:rgba(59,130,246,0.2);color:#60a5fa}
+    .badge-channel{background:rgba(16,185,129,0.2);color:#6ee7b7}
+    .badge-bypass{background:rgba(245,158,11,0.2);color:#fbbf24;cursor:pointer}
+
+    /* Main Card */
+    .main-card{background:var(--glass-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px 20px;box-shadow:0 0 40px rgba(124,58,237,0.1)}
+
+    /* Input */
+    .input-group{display:flex;gap:8px}
+    .input-wrapper{position:relative;flex:1}
+    .input-wrapper .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:18px;transition:var(--transition)}
+    .url-input{width:100%;padding:14px 40px 14px 44px;background:rgba(0,0,0,0.3);border:2px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.92rem;font-family:inherit;outline:none;transition:var(--transition)}
+    .url-input::placeholder{color:var(--text-muted)}
+    .url-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,0.2)}
+    .url-input.valid{border-color:var(--success)}
+    .url-input.invalid{border-color:var(--error)}
+    .clear-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:15px;padding:4px;display:none;transition:var(--transition)}
+    .clear-btn:hover{color:var(--error)}
+    .clear-btn.visible{display:block}
+    .paste-btn,.fetch-btn{padding:14px 16px;background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;font-size:15px;transition:var(--transition);white-space:nowrap}
+    .paste-btn:hover,.fetch-btn:hover{background:rgba(124,58,237,0.2);border-color:var(--accent);color:var(--accent)}
+    .fetch-btn{background:var(--gradient-1);border:none;color:#fff;font-weight:600;font-size:0.85rem;padding:14px 20px}
+    .fetch-btn:hover{opacity:0.9;transform:translateY(-1px)}
+    .fetch-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+    /* Sections */
+    .section{display:none;margin-top:20px;animation:slideDown 0.4s ease}
+    .section.visible{display:block}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Video Info */
+    .video-info-inner{display:flex;gap:16px;align-items:flex-start}
+    .video-thumbnail{width:180px;min-width:180px;border-radius:8px;overflow:hidden;position:relative;flex-shrink:0}
+    .video-thumbnail img{width:100%;height:auto;display:block}
+    .video-thumbnail .badge-overlay{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:4px;font-size:0.65rem;font-weight:700;text-transform:uppercase}
+    .badge-single{background:var(--accent);color:#fff}
+    .badge-playlist{background:var(--info);color:#fff}
+    .video-thumbnail .duration-badge{position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.85);color:#fff;font-size:0.7rem;font-weight:600;padding:2px 6px;border-radius:4px}
+    .video-details{flex:1;min-width:0}
+    .video-details h3{font-size:0.95rem;font-weight:700;margin-bottom:6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .video-meta{display:flex;flex-wrap:wrap;gap:10px}
+    .video-meta span{display:inline-flex;align-items:center;gap:5px;color:var(--text-secondary);font-size:0.78rem}
+    .video-meta span i{color:var(--accent3);font-size:11px}
+
+    /* Playlist Videos List */
+    .playlist-videos{max-height:240px;overflow-y:auto;margin-top:12px;border-radius:8px;background:rgba(0,0,0,0.15);padding:8px}
+    .pv-item{display:flex;align-items:center;gap:10px;padding:8px;border-radius:6px;transition:var(--transition);font-size:0.8rem}
+    .pv-item:hover{background:rgba(255,255,255,0.04)}
+    .pv-item .pv-index{color:var(--text-muted);font-weight:600;width:24px;text-align:center;flex-shrink:0}
+    .pv-item .pv-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pv-item .pv-dur{color:var(--text-muted);font-size:0.72rem;flex-shrink:0}
+
+    /* Format & Quality */
+    .options-row{display:flex;gap:16px;flex-wrap:wrap}
+    .option-group{flex:1;min-width:200px}
+    .option-group h4{font-size:0.78rem;font-weight:600;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px}
+    .option-cards{display:flex;gap:6px;flex-wrap:wrap}
+    .opt-card{position:relative}
+    .opt-card input{position:absolute;opacity:0;width:0;height:0}
+    .opt-card label{display:flex;flex-direction:column;align-items:center;padding:10px 14px;background:rgba(0,0,0,0.2);border:2px solid rgba(255,255,255,0.06);border-radius:8px;cursor:pointer;transition:var(--transition);text-align:center;min-width:70px}
+    .opt-card label:hover{border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.08)}
+    .opt-card input:checked+label{border-color:var(--accent);background:rgba(124,58,237,0.15);box-shadow:0 0 15px rgba(124,58,237,0.15)}
+    .opt-card .opt-main{font-size:0.88rem;font-weight:700;color:var(--text-primary)}
+    .opt-card .opt-sub{font-size:0.62rem;color:var(--text-muted);margin-top:1px}
+    .opt-card .opt-badge{font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:8px;margin-top:3px;background:var(--gradient-1);color:#fff;text-transform:uppercase}
+
+    /* Buttons */
+    .convert-btn{width:100%;padding:15px 24px;background:var(--gradient-1);border:none;border-radius:var(--radius-sm);color:#fff;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:var(--transition);position:relative;overflow:hidden}
+    .convert-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);transition:left 0.5s}
+    .convert-btn:hover::before{left:100%}
+    .convert-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(124,58,237,0.4)}
+    .convert-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .convert-btn:disabled::before{display:none}
+    .convert-btn.batch{background:var(--gradient-2)}
+
+    /* Progress */
+    .progress-bar-wrapper{width:100%;height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin-bottom:8px}
+    .progress-bar{height:100%;background:var(--gradient-1);border-radius:4px;width:0%;transition:width 0.4s ease}
+    .progress-bar.indeterminate{width:30%;animation:indeterminate 1.5s ease-in-out infinite}
+    @keyframes indeterminate{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+    .progress-info{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-secondary)}
+
+    /* Download */
+    .download-area{text-align:center}
+    .success-icon{width:56px;height:56px;background:rgba(16,185,129,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:var(--success);animation:scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+    @keyframes scaleIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .download-area h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+    .download-area .file-info{color:var(--text-muted);font-size:0.8rem;margin-bottom:14px}
+    .dl-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:var(--success);border:none;border-radius:var(--radius-sm);color:#fff;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--transition);text-decoration:none}
+    .dl-btn:hover{background:#059669;transform:translateY(-2px);box-shadow:0 8px 25px rgba(16,185,129,0.3)}
+    .new-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 18px;background:transparent;border:1px solid var(--glass-border);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:0.82rem;font-family:inherit;cursor:pointer;transition:var(--transition)}
+    .new-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* Batch download files list */
+    .batch-files{margin-top:14px;max-height:300px;overflow-y:auto}
+    .bf-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(0,0,0,0.15);border-radius:8px;margin-bottom:6px;transition:var(--transition)}
+    .bf-item:hover{background:rgba(0,0,0,0.25)}
+    .bf-item .bf-icon{color:var(--accent3);font-size:16px;flex-shrink:0}
+    .bf-item .bf-name{flex:1;font-size:0.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .bf-item .bf-dl{padding:6px 12px;background:var(--success);border:none;border-radius:6px;color:#fff;font-size:0.72rem;font-weight:600;cursor:pointer;transition:var(--transition);text-decoration:none;flex-shrink:0}
+    .bf-item .bf-dl:hover{background:#059669}
+    .bf-item .bf-play{padding:6px 12px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:0.72rem;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:4px;flex-shrink:0}
+    .bf-item .bf-play:hover{background:var(--accent2);transform:translateY(-1px)}
+    @keyframes slideUp{from{opacity:0;transform:translate(-50%,25px)}to{opacity:1;transform:translate(-50%,0)}}
+
+    /* History */
+    .history-section{margin-top:28px}
+    .history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .history-header h3{font-size:0.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+    .history-header h3 i{color:var(--accent3)}
+    .clear-history-btn{background:none;border:none;color:var(--text-muted);font-size:0.75rem;cursor:pointer;font-family:inherit;transition:var(--transition)}
+    .clear-history-btn:hover{color:var(--error)}
+    .history-list{display:flex;flex-direction:column;gap:6px}
+    .history-empty{text-align:center;padding:24px;color:var(--text-muted);font-size:0.82rem}
+    .history-empty i{font-size:24px;display:block;margin-bottom:6px;opacity:0.4}
+
+    /* Toast */
+    .toast-container{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:360px}
+    .toast{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg-secondary);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-sm);box-shadow:0 10px 40px rgba(0,0,0,0.5);animation:toastIn 0.35s ease;position:relative;overflow:hidden}
+    .toast.removing{animation:toastOut 0.3s ease forwards}
+    @keyframes toastIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes toastOut{to{transform:translateX(100px);opacity:0}}
+    .toast-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+    .toast-body{flex:1}
+    .toast-title{font-size:0.78rem;font-weight:700;margin-bottom:1px}
+    .toast-message{font-size:0.72rem;color:var(--text-secondary);line-height:1.4}
+    .toast-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0;flex-shrink:0}
+    .toast-progress{position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 10px 10px;animation:toastProg 4s linear forwards}
+    @keyframes toastProg{from{width:100%}to{width:0%}}
+    .toast.success .toast-icon{color:var(--success)}.toast.success .toast-progress{background:var(--success)}
+    .toast.error .toast-icon{color:var(--error)}.toast.error .toast-progress{background:var(--error)}
+    .toast.warning .toast-icon{color:var(--warning)}.toast.warning .toast-progress{background:var(--warning)}
+    .toast.info .toast-icon{color:var(--info)}.toast.info .toast-progress{background:var(--info)}
+
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Modal Styling */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:9990;display:none;align-items:center;justify-content:center;padding:16px;animation:fadeIn 0.25s ease}
+    .modal-overlay.active{display:flex}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    .modal-card{width:100%;max-width:560px;background:var(--bg-secondary);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;box-shadow:0 20px 60px rgba(0,0,0,0.6);max-height:90vh;overflow-y:auto;position:relative}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.06)}
+    .modal-title{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:var(--text-primary)}
+    .modal-title i{color:var(--accent3);font-size:1.2rem}
+    .modal-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer;padding:4px;transition:var(--transition)}
+    .modal-close:hover{color:var(--error)}
+
+    .status-box{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 16px;margin-bottom:20px}
+    .status-row{display:flex;justify-content:space-between;font-size:0.82rem;padding:4px 0}
+    .status-val{font-weight:600}
+    .text-success{color:var(--success)}
+    .text-accent{color:var(--accent3)}
+
+    .update-action-box{background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:16px;margin-bottom:20px}
+    .update-action-box h4{font-size:0.9rem;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .update-action-box h4 i{color:var(--accent3)}
+    .section-desc{font-size:0.75rem;color:var(--text-secondary);line-height:1.4;margin-bottom:12px}
+    .update-btn{width:100%;padding:12px;background:var(--gradient-green);border:none;border-radius:8px;color:#fff;font-size:0.88rem;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:var(--transition)}
+    .update-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(16,185,129,0.3)}
+    .update-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+    .update-log{margin-top:10px;padding:8px 12px;background:rgba(0,0,0,0.4);border-radius:6px;font-family:monospace;font-size:0.7rem;color:var(--text-secondary);max-height:100px;overflow-y:auto;white-space:pre-wrap}
+
+    .profile-select-box{margin-bottom:20px}
+    .profile-select-box h4{font-size:0.88rem;font-weight:700;color:var(--text-primary);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .profile-select-box h4 i{color:var(--warning)}
+    .profile-item{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);border-radius:8px;margin-bottom:8px;cursor:pointer;transition:var(--transition)}
+    .profile-item:hover{border-color:rgba(124,58,237,0.3);background:rgba(124,58,237,0.06)}
+    .profile-item.active{border-color:var(--accent);background:rgba(124,58,237,0.15)}
+    .profile-radio{margin-top:3px;accent-color:var(--accent)}
+    .profile-info{flex:1}
+    .profile-name{font-size:0.82rem;font-weight:700;color:var(--text-primary)}
+    .profile-desc{font-size:0.7rem;color:var(--text-muted);margin-top:2px}
+
+    .diag-box{background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px}
+    .test-btn{padding:8px 16px;background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.4);border-radius:6px;color:#60a5fa;font-size:0.78rem;font-weight:600;font-family:inherit;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
+    .test-btn:hover{background:rgba(59,130,246,0.3);color:#fff}
+    .test-result{margin-top:10px;padding:10px;border-radius:6px;font-size:0.78rem;line-height:1.4}
+    .test-result.success{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#6ee7b7}
+    .test-result.failed{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5}
+
+    /* Turbo Mode Toggle */
+    .turbo-box{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);border-radius:10px;margin-top:14px}
+    .turbo-left{display:flex;align-items:center;gap:12px}
+    .turbo-icon{width:36px;height:36px;border-radius:8px;background:var(--gradient-1);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex-shrink:0}
+    .turbo-title{display:flex;align-items:center;gap:8px;font-size:0.85rem;font-weight:700;color:var(--text-primary)}
+    .turbo-badge{padding:2px 6px;border-radius:10px;background:var(--gradient-green);color:#fff;font-size:0.62rem;font-weight:700;text-transform:uppercase}
+    .turbo-desc{font-size:0.72rem;color:var(--text-secondary);margin-top:2px}
+
+    /* Switch */
+    .switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,0.15);border-radius:24px;transition:var(--transition)}
+    .slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:var(--transition)}
+    .switch input:checked + .slider{background:var(--accent)}
+    .switch input:checked + .slider:before{transform:translateX(20px)}
+
+    /* Batch Download All Actions */
+    .batch-actions{display:flex;gap:12px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+    .dl-all-zip-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;background:var(--gradient-green);border:none;border-radius:var(--radius-sm);color:#fff;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--transition);text-decoration:none;box-shadow:0 8px 25px rgba(16,185,129,0.35)}
+    .dl-all-zip-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(16,185,129,0.5);color:#fff}
+    .dl-all-individual-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:var(--radius-sm);color:var(--text-primary);font-size:0.85rem;font-weight:600;font-family:inherit;cursor:pointer;transition:var(--transition)}
+    .dl-all-individual-btn:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);transform:translateY(-1px)}
+    .batch-files-header{display:flex;justify-content:space-between;align-items:center;padding:10px 4px 6px;font-size:0.82rem;font-weight:600;color:var(--text-secondary);margin-top:12px;border-top:1px solid rgba(255,255,255,0.08)}
+
+    /* Mode Navigation Tabs */
+    .mode-tabs{display:flex;gap:8px;margin-bottom:18px;background:rgba(0,0,0,0.3);padding:5px;border-radius:var(--radius-sm);border:1px solid var(--glass-border)}
+    .mode-tab{flex:1;padding:10px 12px;background:transparent;border:none;border-radius:8px;color:var(--text-secondary);font-size:0.82rem;font-weight:600;cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+    .mode-tab:hover{color:#fff;background:rgba(255,255,255,0.05)}
+    .mode-tab.active{background:var(--gradient-1);color:#fff;box-shadow:0 4px 15px rgba(124,58,237,0.35)}
+
+    /* Search Results Grid */
+    .search-results-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:16px;max-height:460px;overflow-y:auto;padding-right:4px}
+    .search-card{display:flex;gap:14px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:10px;transition:var(--transition);align-items:center}
+    .search-card:hover{background:rgba(255,255,255,0.06);border-color:var(--accent);transform:translateY(-1px)}
+    .search-thumb-wrap{width:120px;min-width:120px;height:70px;border-radius:6px;overflow:hidden;position:relative;background:#000}
+    .search-thumb-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+    .search-thumb-dur{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.85);color:#fff;font-size:0.65rem;font-weight:700;padding:1px 5px;border-radius:4px}
+    .search-info{flex:1;min-width:0}
+    .search-title{font-size:0.86rem;font-weight:700;color:var(--text-primary);margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3}
+    .search-meta{font-size:0.73rem;color:var(--text-secondary);display:flex;gap:10px;flex-wrap:wrap}
+    .search-meta span{display:inline-flex;align-items:center;gap:4px}
+    .search-actions{display:flex;gap:6px;flex-shrink:0}
+    .btn-quick-dl{padding:8px 12px;border-radius:6px;border:none;font-size:0.75rem;font-weight:700;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+    .btn-quick-mp3{background:rgba(124,58,237,0.2);color:var(--accent3);border:1px solid rgba(124,58,237,0.4)}
+    .btn-quick-mp3:hover{background:var(--accent);color:#fff}
+    .btn-quick-mp4{background:rgba(59,130,246,0.2);color:#60a5fa;border:1px solid rgba(59,130,246,0.4)}
+    .btn-quick-mp4:hover{background:var(--info);color:#fff}
+
+    /* Batch Multi-URL Box */
+    .batch-multi-textarea{width:100%;height:120px;padding:12px;background:rgba(0,0,0,0.3);border:2px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:#fff;font-size:0.85rem;font-family:monospace;resize:vertical;outline:none;transition:var(--transition)}
+    .batch-multi-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,0.2)}
+    .batch-queue-container{margin-top:16px;max-height:300px;overflow-y:auto}
+    .queue-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:8px;margin-bottom:8px;font-size:0.8rem;gap:12px}
+    .queue-title{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+    .queue-status-badge{padding:3px 8px;border-radius:12px;font-size:0.7rem;font-weight:700}
+    .badge-pending{background:rgba(255,255,255,0.08);color:var(--text-muted)}
+    .badge-running{background:rgba(59,130,246,0.2);color:#60a5fa}
+    .badge-success{background:rgba(16,185,129,0.2);color:#6ee7b7}
+    .badge-error{background:rgba(239,68,68,0.2);color:#fca5a5}
+
+    /* Pro Feature Toggles */
+    .pro-toggle-card{margin-top:12px;padding:12px 14px;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .pro-toggle-left{display:flex;align-items:center;gap:12px;flex:1}
+    .pro-toggle-icon{width:36px;height:36px;border-radius:8px;background:rgba(124,58,237,0.15);color:var(--accent3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .pro-toggle-text h5{font-size:0.83rem;font-weight:700;color:var(--text-primary);margin-bottom:2px}
+    .pro-toggle-text p{font-size:0.72rem;color:var(--text-muted);line-height:1.3}
+
+    /* QR Code Modal */
+    .qr-box{text-align:center;padding:16px}
+    .qr-card-img{background:#fff;padding:12px;border-radius:12px;display:inline-block;box-shadow:0 8px 30px rgba(0,0,0,0.5);margin:10px 0}
+    .qr-url-box{display:flex;gap:8px;margin-top:14px}
+    .qr-url-input{flex:1;padding:8px 12px;background:rgba(0,0,0,0.4);border:1px solid var(--glass-border);border-radius:6px;color:#fff;font-size:0.78rem;font-family:monospace}
+    .qr-copy-btn{padding:8px 14px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:0.78rem;font-weight:600;cursor:pointer}
+
+    /* ============================================================
+       WINAMP RETRO PLAYER STYLING
+       ============================================================ */
+    .winamp-chassis {
+      background: linear-gradient(180deg, #2b2c3a 0%, #1c1d28 50%, #14151e 100%);
+      border: 3px solid #4a4b60;
+      border-radius: 8px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.7), inset 1px 1px 0 rgba(255,255,255,0.15), inset -1px -1px 0 rgba(0,0,0,0.6);
+      overflow: hidden;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+    .winamp-titlebar {
+      background: linear-gradient(90deg, #0f2b48 0%, #1e5799 40%, #207cca 60%, #0f2b48 100%);
+      padding: 5px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #111;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #e0f2fe;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .winamp-window-btns {
+      display: flex;
+      gap: 4px;
+    }
+    .winamp-wbtn {
+      width: 14px;
+      height: 14px;
+      background: #334155;
+      border: 1px outset #64748b;
+      font-size: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      line-height: 1;
+    }
+    .winamp-deck {
+      padding: 12px;
+    }
+    .winamp-screen {
+      background: #030804;
+      border: 2px inset #1b3320;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      box-shadow: inset 0 0 15px rgba(0,255,102,0.12);
+      margin-bottom: 12px;
+    }
+    .winamp-screen-left {
+      min-width: 130px;
+      text-align: center;
+      border-right: 1px solid rgba(0,255,102,0.2);
+      padding-right: 12px;
+    }
+    .winamp-timer {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 2.1rem;
+      font-weight: 900;
+      color: #00ff66;
+      text-shadow: 0 0 12px rgba(0,255,102,0.8), 0 0 20px rgba(0,255,102,0.4);
+      letter-spacing: 2px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .winamp-tech-badges {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .winamp-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 1px 4px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(0,255,102,0.2);
+      border-radius: 3px;
+      color: #276738;
+      font-family: monospace;
+    }
+    .winamp-badge.lit {
+      color: #00ff66;
+      border-color: #00ff66;
+      text-shadow: 0 0 5px rgba(0,255,102,0.6);
+    }
+    .winamp-screen-right {
+      flex: 1;
+      min-width: 0;
+    }
+    .winamp-marquee-container {
+      background: #000;
+      border: 1px solid #14351a;
+      border-radius: 3px;
+      padding: 4px 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-bottom: 8px;
+    }
+    .winamp-marquee {
+      display: inline-block;
+      font-family: monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #00ff66;
+      text-shadow: 0 0 8px rgba(0,255,102,0.7);
+      animation: winampScroll 16s linear infinite;
+    }
+    @keyframes winampScroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .winamp-vis-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    #winampVisualizer {
+      background: #000;
+      border: 1px solid #14351a;
+      border-radius: 3px;
+      display: block;
+      height: 38px;
+      width: 180px;
+    }
+    .winamp-vis-labels {
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: #38bdf8;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .winamp-seek-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .winamp-time-label {
+      font-family: monospace;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      min-width: 38px;
+    }
+    .winamp-seek {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    .winamp-seek::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      background: linear-gradient(180deg, #64748b 0%, #334155 100%);
+      border: 1px outset #94a3b8;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .winamp-controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .winamp-btn-group {
+      display: flex;
+      gap: 5px;
+    }
+    .winamp-btn {
+      padding: 7px 14px;
+      background: linear-gradient(180deg, #3f4156 0%, #252636 100%);
+      border: 2px outset #5a5c78;
+      border-radius: 4px;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s;
+    }
+    .winamp-btn:hover {
+      background: linear-gradient(180deg, #4f526c 0%, #313348 100%);
+      color: #38bdf8;
+    }
+    .winamp-btn:active, .winamp-btn.active {
+      border: 2px inset #5a5c78;
+      background: #171822;
+      color: #00ff66;
+    }
+    .winamp-btn-play {
+      color: #00ff66;
+    }
+    #winampKaraokeBtn.active {
+      border-color: #ec4899;
+      background: linear-gradient(135deg, #1e0520 0%, #3b0a45 100%);
+      color: #ec4899;
+      box-shadow: 0 0 10px rgba(236,72,153,0.5), inset 0 0 5px rgba(236,72,153,0.2);
+      animation: karaokePulse 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes karaokePulse {
+      0% { box-shadow: 0 0 8px rgba(236,72,153,0.4); }
+      100% { box-shadow: 0 0 16px rgba(236,72,153,0.7), 0 0 30px rgba(236,72,153,0.2); }
+    }
+    .winamp-vol-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.3);
+      padding: 5px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .winamp-vol-slider {
+      width: 80px;
+      height: 5px;
+      -webkit-appearance: none;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    .winamp-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: #00ff66;
+      border: 1px solid #059669;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
+    /* Winamp Playlist Window */
+    .winamp-playlist-window {
+      background: linear-gradient(180deg, #1e1f2b 0%, #151620 100%);
+      border: 3px solid #3b3c4f;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+    .winamp-pl-titlebar {
+      background: linear-gradient(90deg, #102a45 0%, #184475 100%);
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #111;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #bae6fd;
+    }
+    .winamp-search-bar {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .winamp-pl-list {
+      max-height: 280px;
+      overflow-y: auto;
+      background: #08090e;
+      padding: 6px;
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+    .winamp-pl-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #94a3b8;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      transition: background 0.15s;
+      gap: 8px;
+    }
+    .winamp-pl-item:hover {
+      background: rgba(0,255,102,0.08);
+      color: #e2e8f0;
+    }
+    .winamp-pl-item.active {
+      background: rgba(0,255,102,0.18);
+      color: #00ff66;
+      font-weight: bold;
+      text-shadow: 0 0 6px rgba(0,255,102,0.6);
+      border-left: 3px solid #00ff66;
+    }
+    .winamp-pl-col-num {
+      width: 25px;
+      color: #64748b;
+    }
+    .winamp-pl-col-title {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .winamp-pl-col-dur {
+      color: #64748b;
+      margin-left: 8px;
+    }
+    .winamp-pl-empty {
+      text-align: center;
+      padding: 30px 16px;
+      color: #64748b;
+    }
+
+    /* Live Karaoke Line Display in Winamp Screen */
+    .winamp-lcd-karaoke {
+      background: #020603;
+      border: 1px solid #14532d;
+      border-radius: 4px;
+      padding: 5px 8px;
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      box-shadow: inset 0 0 6px rgba(0, 255, 102, 0.15);
+    }
+    .winamp-karaoke-icon {
+      color: #00ff66;
+      font-size: 0.75rem;
+      animation: pulse 1.5s infinite;
+      flex-shrink: 0;
+    }
+    .winamp-karaoke-text {
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: #00ff66;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(0, 255, 102, 0.7);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.5px;
+    }
+
+    /* Winamp View Switcher Toggle Bar */
+    .winamp-view-toggle-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      margin-bottom: 2px;
+      flex-wrap: wrap;
+    }
+    .winamp-tab-btn {
+      background: #14151f;
+      border: 1px solid #2e3042;
+      color: #94a3b8;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .winamp-tab-btn:hover {
+      background: #1e202f;
+      color: #e2e8f0;
+    }
+    .winamp-tab-btn.active {
+      background: linear-gradient(135deg, #4c1d95, #6d28d9);
+      color: #fff;
+      border-color: #7c3aed;
+      box-shadow: 0 0 12px rgba(109, 40, 217, 0.4);
+    }
+
+    /* Winamp Bottom Grid & Lyrics Synchronizer */
+    .winamp-bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 8px;
+      align-items: start;
+    }
+    .winamp-bottom-grid.view-lyrics .winamp-playlist-window {
+      display: none;
+    }
+    .winamp-bottom-grid.view-lyrics .winamp-lyrics-window {
+      grid-column: 1 / -1;
+      height: 520px;
+    }
+    .winamp-bottom-grid.view-playlist .winamp-lyrics-window {
+      display: none;
+    }
+    .winamp-bottom-grid.view-playlist .winamp-playlist-window {
+      grid-column: 1 / -1;
+    }
+    @media (max-width: 820px) {
+      .winamp-bottom-grid:not(.view-playlist):not(.view-lyrics) {
+        grid-template-columns: 1fr;
+      }
+    }
+    .winamp-lyrics-window {
+      background: linear-gradient(180deg, #181924 0%, #10111a 100%);
+      border: 3px solid #3b3c4f;
+      border-radius: 8px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+    }
+    .winamp-lyrics-titlebar {
+      background: linear-gradient(90deg, #3b1b68 0%, #6d28d9 100%);
+      padding: 6px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #111;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #ede9fe;
+      letter-spacing: 0.5px;
+    }
+    .winamp-lyrics-sync-bar {
+      background: #10111a;
+      border-bottom: 1px solid #28293d;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .winamp-sync-btn {
+      background: #1a1c2b;
+      border: 1px solid #3b3c4f;
+      color: #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+    }
+    .winamp-sync-btn:hover {
+      background: #2d3049;
+      color: #fff;
+      border-color: #6d28d9;
+    }
+    .winamp-sync-btn:active {
+      transform: scale(0.95);
+    }
+    .winamp-sync-val {
+      background: rgba(109, 40, 217, 0.2);
+      border-color: #7c3aed;
+      color: #a855f7;
+      font-family: monospace;
+      font-weight: 700;
+      min-width: 55px;
+      justify-content: center;
+    }
+    .winamp-lyrics-body {
+      flex: 1;
+      padding: 24px 16px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      text-align: center;
+      position: relative;
+      background: radial-gradient(circle at 50% 20%, rgba(109, 40, 217, 0.08) 0%, transparent 75%), #090a10;
+    }
+    .winamp-lyrics-body::-webkit-scrollbar {
+      width: 6px;
+    }
+    .winamp-lyrics-body::-webkit-scrollbar-track {
+      background: #0f1016;
+    }
+    .winamp-lyrics-body::-webkit-scrollbar-thumb {
+      background: #6d28d9;
+      border-radius: 3px;
+    }
+    .winamp-lyrics-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 30px 10px;
+    }
+    .winamp-lyric-line {
+      padding: 10px 14px;
+      margin: 6px 0;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      line-height: 1.6;
+      user-select: none;
+    }
+    .winamp-lyric-line:hover {
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .winamp-lyric-line.active {
+      color: #00ff66;
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, rgba(0, 255, 102, 0.15), rgba(56, 189, 248, 0.15));
+      border-left: 3px solid #00ff66;
+      border-right: 3px solid #00ff66;
+      text-shadow: 0 0 12px rgba(0, 255, 102, 0.6), 0 0 24px rgba(0, 255, 102, 0.3);
+      transform: scale(1.05);
+      padding: 12px 16px;
+    }
+    .winamp-lyric-line.past {
+      color: #475569;
+      opacity: 0.6;
+    }
+
+    /* Responsive */
+    @media(max-width:600px){
+      .container{padding:12px 10px 40px}
+      .header{padding:16px 0 14px}
+      .header h1{font-size:1.4rem}
+      .main-card{padding:16px 12px}
+      .video-info-inner{flex-direction:column}
+      .video-thumbnail{width:100%;min-width:unset}
+      .options-row{flex-direction:column;gap:12px}
+      .option-cards{flex-wrap:wrap}
+      .toast-container{right:8px;left:8px;max-width:unset}
+      .input-group{flex-wrap:wrap}
+      .input-wrapper{flex:1 1 100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Settings / 1-Click Update Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-shield-virus"></i>
+          <span>Pengaturan Anti-Blokir & Update</span>
+        </div>
+        <button class="modal-close" id="closeSettingsBtn"><i class="fas fa-times"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Status Box -->
+        <div class="status-box">
+          <div class="status-row">
+            <span>Versi Engine (yt-dlp):</span>
+            <span class="status-val text-accent" id="modalEngineVer">Memeriksa...</span>
+          </div>
+          <div class="status-row">
+            <span>Converter FFmpeg:</span>
+            <span class="status-val text-success" id="modalFfmpegStatus">Aktif</span>
+          </div>
+          <div class="status-row">
+            <span>Database State & Riwayat:</span>
+            <span class="status-val text-success" id="modalDbStatus">SQLite (Aktif)</span>
+          </div>
+          <div class="status-row">
+            <span>Profil Bypass Aktif:</span>
+            <span class="status-val text-success" id="modalActiveProfile">Android + Web</span>
+          </div>
+        </div>
+
+        <!-- 1-Click Update Button -->
+        <div class="update-action-box">
+          <h4><i class="fas fa-sync-alt"></i> Pembaharuan Engine 1-Klik</h4>
+          <p class="section-desc">
+            Jika sewaktu-waktu Google memperbarui algoritma YouTube dan konversi mengalami kendala, klik tombol ini. Sistem akan langsung mengunduh konfigurasi & engine yt-dlp resmi paling baru secara otomatis.
+          </p>
+          <button class="update-btn" id="updateEngineBtn">
+            <i class="fas fa-cloud-download-alt"></i>
+            <span id="updateBtnText">Perbarui Engine yt-dlp Sekarang (1-Klik)</span>
+          </button>
+          <div class="update-log" id="updateLog" style="display:none"></div>
+        </div>
+
+        <!-- Bypass Profile Selector -->
+        <div class="profile-select-box">
+          <h4><i class="fas fa-user-shield"></i> Pilihan Profil Bypass Google</h4>
+          <p class="section-desc">Pilih profil client YouTube untuk mem-bypass filter pembatasan:</p>
+          <div id="profileOptionsList"></div>
+        </div>
+
+        <!-- Browser Cookie Integration -->
+        <div class="profile-select-box" style="margin-top:16px">
+          <h4><i class="fas fa-cookie-bite" style="color:#f59e0b"></i> Ambil Sesi Cookies Browser (Bebas Blokir 100%)</h4>
+          <p class="section-desc">Gunakan sesi resmi YouTube dari browser lokal Anda (lolos dari verifikasi "Sign in to confirm you're not a bot" & video berbatas umur):</p>
+          <div id="browserOptionsList"></div>
+        </div>
+
+        <!-- Protection Toggles: Auto-Fallback & Smart Delay -->
+        <div style="margin-top:16px;padding:12px 14px;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:8px">
+          <h4 style="margin:0 0 10px 0;font-size:0.85rem;color:var(--text-primary)"><i class="fas fa-shield-virus" style="color:var(--accent3)"></i> Proteksi Pintar Tingkat Lanjut</h4>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06)">
+            <div>
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text-primary)">Auto-Fallback Client Otomatis</div>
+              <div style="font-size:0.7rem;color:var(--text-muted)">Otomatis beralih ke client lain jika client saat ini dibatasi oleh Google</div>
+            </div>
+            <input type="checkbox" id="autoFallbackToggle" checked style="accent-color:var(--accent);width:18px;height:18px;cursor:pointer">
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+            <div>
+              <div style="font-size:0.8rem;font-weight:600;color:var(--text-primary)">Smart Human Delay (Jeda Alami)</div>
+              <div style="font-size:0.7rem;color:var(--text-muted)">Jeda acak mikro pada playlist agar trafik terbaca sebagai manusia wajar</div>
+            </div>
+            <input type="checkbox" id="smartDelayToggle" checked style="accent-color:var(--accent);width:18px;height:18px;cursor:pointer">
+          </div>
+        </div>
+
+        <!-- Diagnostic Test -->
+        <div class="diag-box" style="margin-top:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <div>
+              <h4 style="margin:0;font-size:0.85rem;color:var(--text-primary)"><i class="fas fa-bolt"></i> Uji Koneksi Bypass</h4>
+              <p class="section-desc" style="margin:2px 0 0 0">Cek apakah konfigurasi saat ini berhasil menembus YouTube.</p>
+            </div>
+            <button class="test-btn" id="testBypassBtn">
+              <i class="fas fa-play"></i> Uji Sekarang
+            </button>
+          </div>
+          <div class="test-result" id="testResult" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Top Action Bar -->
+    <div class="top-bar">
+      <div class="engine-status-tag">
+        <span class="status-dot pulse"></span>
+        <span id="topEngineVer">Engine Ready</span>
+      </div>
+      <button class="settings-btn" id="openSettingsBtn">
+        <i class="fas fa-shield-alt"></i>
+        <span>Pengaturan Bypass & Update</span>
+      </button>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-music"></i></div>
+        <h1>Khanza.NET - YT Downloader Pro</h1>
+      </div>
+      <p class="subtitle">Download Audio & Video Bebas Watermark — YouTube, TikTok, Instagram Reels, Facebook, & Twitter/X</p>
+      <div class="badges">
+        <span class="badge badge-mp3">🎵 MP3 (Audio)</span>
+        <span class="badge badge-mp4">🎬 MP4 (Video)</span>
+        <span class="badge badge-channel">📺 Playlist / Channel</span>
+        <span class="badge" style="background:#010101;color:#25f4ee;border:1px solid #fe2c55"><i class="fab fa-tiktok"></i> TikTok No-WM</span>
+        <span class="badge" style="background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);color:#fff"><i class="fab fa-instagram"></i> Reels</span>
+        <span class="badge" style="background:#1877f2;color:#fff"><i class="fab fa-facebook"></i> Facebook</span>
+        <span class="badge badge-bypass" id="badgeBypassTrigger">🔓 Bypass Active (Klik untuk setting)</span>
+      </div>
+    </header>
+
+    <div class="main-card">
+      <!-- Mode Switcher Tabs -->
+      <div class="mode-tabs">
+        <button type="button" class="mode-tab active" id="tabUrl"><i class="fas fa-link"></i> Tempel Link</button>
+        <button type="button" class="mode-tab" id="tabSearch"><i class="fas fa-search"></i> Cari di YouTube</button>
+        <button type="button" class="mode-tab" id="tabBatch"><i class="fas fa-layer-group"></i> Batch Multi-Link</button>
+        <button type="button" class="mode-tab" id="tabWinamp" style="border-color:rgba(16,185,129,0.4);color:#34d399"><i class="fas fa-bolt"></i> ⚡ Winamp Live Player</button>
+      </div>
+
+      <!-- Mode 1: Single / Playlist URL Input -->
+      <div id="urlModeContainer">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <input type="text" class="url-input" id="urlInput" placeholder="Tempel link YouTube, TikTok, Instagram Reels, FB, atau Twitter/X..." autocomplete="off" spellcheck="false" />
+            <i class="fab fa-youtube input-icon"></i>
+            <button class="clear-btn" id="clearBtn" title="Clear"><i class="fas fa-times"></i></button>
+          </div>
+          <button class="paste-btn" id="pasteBtn" title="Tempel dari Clipboard"><i class="fas fa-paste"></i> Tempel Cepat</button>
+          <button class="fetch-btn" id="fetchBtn"><i class="fas fa-bolt"></i> Analisis</button>
+        </div>
+      </div>
+
+      <!-- Mode 2: In-App YouTube Search -->
+      <div id="searchModeContainer" style="display:none">
+        <div class="input-group">
+          <div class="input-wrapper">
+            <input type="text" class="url-input" id="searchInput" placeholder="Ketik judul lagu, artis, atau kata kunci YouTube..." autocomplete="off" spellcheck="false" />
+            <i class="fas fa-search input-icon"></i>
+            <button class="clear-btn" id="clearSearchBtn" title="Clear"><i class="fas fa-times"></i></button>
+          </div>
+          <button class="fetch-btn" id="searchBtn"><i class="fas fa-search"></i> Cari</button>
+        </div>
+        <div id="searchLoading" style="display:none;text-align:center;padding:24px;color:var(--text-secondary)">
+          <span class="spinner" style="width:28px;height:28px;border-width:3px"></span>
+          <p style="margin-top:8px;font-size:0.82rem">Mencari video di YouTube...</p>
+        </div>
+        <div class="search-results-grid" id="searchResultsGrid" style="display:none"></div>
+      </div>
+
+      <!-- Mode 3: Batch Multi-Link -->
+      <div id="batchModeContainer" style="display:none">
+        <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:8px">
+          <i class="fas fa-info-circle" style="color:var(--accent3)"></i> Tempel beberapa tautan video sekaligus (satu tautan per baris). Sistem akan mengunduhnya secara otomatis berurutan:
+        </p>
+        <textarea class="batch-multi-textarea" id="batchUrlsInput" placeholder="https://www.youtube.com/watch?v=...&#10;https://www.tiktok.com/@user/video/...&#10;https://www.instagram.com/reel/..."></textarea>
+        
+        <div style="display:flex;gap:12px;margin-top:12px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:0.8rem;color:var(--text-secondary);font-weight:600">Format Default:</span>
+            <select id="batchFormatSelect" style="padding:8px 12px;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:6px;color:#fff;font-size:0.82rem;outline:none">
+              <option value="mp3">MP3 (Audio 320k)</option>
+              <option value="mp4">MP4 (Video 1080p FHD)</option>
+            </select>
+          </div>
+          <button type="button" class="fetch-btn" id="startBatchQueueBtn" style="padding:10px 18px;margin-left:auto">
+            <i class="fas fa-play"></i> Mulai Unduh Semua (Batch Queue)
+          </button>
+        </div>
+
+        <div class="batch-queue-container" id="batchQueueContainer" style="display:none">
+          <div style="font-size:0.82rem;font-weight:700;margin:14px 0 8px;color:var(--text-primary);display:flex;justify-content:space-between">
+            <span>Daftar Antrian Download:</span>
+            <span id="batchQueueStats" style="color:var(--accent3)">0/0 Selesai</span>
+          </div>
+          <div id="batchQueueList"></div>
+        </div>
+      </div>
+
+      <!-- Mode 4: Winamp Live MP3 Player (Zero Download / Bandwidth Saver) -->
+      <div id="winampModeContainer" style="display:none">
+        <!-- Winamp Main Chassis -->
+        <div class="winamp-chassis">
+          <!-- Titlebar -->
+          <div class="winamp-titlebar">
+            <div class="winamp-title-text"><i class="fas fa-bolt" style="color:#fbbf24"></i> WINAMP PRO • YOUTUBE LIVE AUDIO STREAMER</div>
+            <div class="winamp-window-btns">
+              <span class="winamp-wbtn">_</span>
+              <span class="winamp-wbtn">□</span>
+              <span class="winamp-wbtn">✕</span>
+            </div>
+          </div>
+
+          <!-- Main Screen / LCD Display -->
+          <div class="winamp-deck">
+            <div class="winamp-screen">
+              <!-- Left: LED Timer & Info -->
+              <div class="winamp-screen-left">
+                <div class="winamp-timer" id="winampTimer">00:00</div>
+                <div class="winamp-tech-badges">
+                  <span class="winamp-badge lit" id="winampStereoBadge">STEREO</span>
+                  <span class="winamp-badge lit" style="color:#10b981;font-weight:bold" id="winampHqBadge" title="Studio HQ Stabilizer Aktif: Suara pelan & keras otomatis distabilkan ke -14 LUFS"><i class="fas fa-sliders"></i> HQ STABILIZER</span>
+                  <span class="winamp-badge lit" style="color:#38bdf8">192 KBPS</span>
+                  <span class="winamp-badge lit">48 KHZ</span>
+                  <span class="winamp-badge lit" style="color:#f59e0b" title="EBU R128 Broadcast Loudness Normalization">AUTO-NORM (-14 LUFS)</span>
+                  <span class="winamp-badge" id="winampKaraokeBadge" style="color:#ec4899;font-weight:bold;display:none" title="Mode Karaoke Aktif: Vokal Dihilangkan"><i class="fas fa-microphone-slash"></i> VOCAL OFF</span>
+                </div>
+              </div>
+
+              <!-- Right: Marquee & Spectrum Visualizer -->
+              <div class="winamp-screen-right">
+                <div class="winamp-marquee-container">
+                  <div class="winamp-marquee" id="winampMarquee">⚡ WINAMP READY • CARI LAGU ATAU TEMPEL LINK YOUTUBE UNTUK STREAMING LANGSUNG (ZERO DISK / HEMAT BANDWIDTH) ⚡</div>
+                </div>
+                <!-- Live Karaoke Line Display in Screen -->
+                <div class="winamp-lcd-karaoke" id="winampLcdKaraoke">
+                  <span class="winamp-karaoke-icon"><i class="fas fa-microphone-lines"></i></span>
+                  <span class="winamp-karaoke-text" id="winampLcdKaraokeText">Lirik karaoke vokal akan menyala di sini saat lagu diputar...</span>
+                </div>
+                <div class="winamp-vis-box">
+                  <canvas id="winampVisualizer" width="180" height="38"></canvas>
+                  <div class="winamp-vis-labels">
+                    <span>EQ SPECTRUM</span>
+                    <span id="winampTrackDur">--:--</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Seek Bar -->
+            <div class="winamp-seek-row">
+              <span class="winamp-time-label" id="winampCurrentTime">00:00</span>
+              <input type="range" class="winamp-seek" id="winampSeekBar" min="0" max="100" value="0" step="0.1">
+              <span class="winamp-time-label" id="winampTotalTime">00:00</span>
+            </div>
+
+            <!-- Controls Deck: Transport Buttons & Volume -->
+            <div class="winamp-controls-row">
+              <div class="winamp-btn-group" style="flex-wrap:wrap">
+                <button type="button" class="winamp-btn" id="winampPrevBtn" title="Previous Track"><i class="fas fa-backward-step"></i></button>
+                <button type="button" class="winamp-btn winamp-btn-play" id="winampPlayBtn" title="Play"><i class="fas fa-play"></i></button>
+                <button type="button" class="winamp-btn" id="winampPauseBtn" title="Pause"><i class="fas fa-pause"></i></button>
+                <button type="button" class="winamp-btn" id="winampStopBtn" title="Stop"><i class="fas fa-stop"></i></button>
+                <button type="button" class="winamp-btn" id="winampNextBtn" title="Next Track"><i class="fas fa-forward-step"></i></button>
+                <button type="button" class="winamp-btn" id="winampEjectBtn" title="Eject / Input Link"><i class="fas fa-eject"></i></button>
+                <button type="button" class="winamp-btn active" id="winampHqToggleBtn" title="Studio HQ Audio Stabilizer: Menstabilkan otomatis lagu pelan & keras ke -14 LUFS standar studio + jernihkan vokal"><i class="fas fa-wand-magic-sparkles"></i> <span style="font-size:0.65rem;margin-left:3px">HQ AUDIO</span></button>
+                <button type="button" class="winamp-btn" id="winampShuffleBtn" title="Mode Acak (Shuffle)"><i class="fas fa-shuffle"></i> <span style="font-size:0.65rem;margin-left:3px">SHUFFLE</span></button>
+                <button type="button" class="winamp-btn" id="winampRepeatBtn" title="Mode Ulang (Repeat)"><i class="fas fa-repeat"></i> <span style="font-size:0.65rem;margin-left:3px">REPEAT</span></button>
+                <button type="button" class="winamp-btn" id="winampKaraokeBtn" title="Mode Karaoke: Hilangkan Vokal Penyanyi Secara Real-Time (Hanya Musik / Instrumental)"><i class="fas fa-microphone-slash"></i> <span style="font-size:0.65rem;margin-left:3px">KARAOKE</span></button>
+              </div>
+
+              <div class="winamp-vol-group">
+                <i class="fas fa-volume-high" style="font-size:0.75rem;color:#00ff66"></i>
+                <input type="range" class="winamp-vol-slider" id="winampVolSlider" min="0" max="1" step="0.01" value="0.9">
+                <span id="winampVolLabel" style="font-family:monospace;font-size:0.72rem;color:#00ff66;min-width:35px">90%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Winamp View Toggle Bar -->
+        <div class="winamp-view-toggle-bar">
+          <button type="button" class="winamp-tab-btn active" id="winampTabSplit" onclick="setWinampView('split')" title="Tampilkan Playlist & Lirik Karaoke Berdampingan">
+            <i class="fas fa-columns"></i> 🔀 Split (Playlist & Lirik)
+          </button>
+          <button type="button" class="winamp-tab-btn" id="winampTabLyrics" onclick="setWinampView('lyrics')" title="Fokus Penuh ke Lirik Lagu Karaoke">
+            <i class="fas fa-microphone-lines"></i> 🎤 Fokus Lirik Karaoke
+            <span class="winamp-badge lit" id="winampTabLyricsBadge" style="margin-left:6px;font-size:0.6rem">READY</span>
+          </button>
+          <button type="button" class="winamp-tab-btn" id="winampTabPlaylist" onclick="setWinampView('playlist')" title="Tampilkan Hanya Playlist">
+            <i class="fas fa-list-ul"></i> 📋 Playlist Saja
+          </button>
+        </div>
+
+        <!-- Winamp Bottom Grid: Playlist (Left) & Karaoke Lyrics (Right) -->
+        <div class="winamp-bottom-grid" id="winampBottomGrid">
+          <!-- Winamp Playlist Editor Window -->
+          <div class="winamp-playlist-window">
+            <div class="winamp-pl-titlebar">
+              <div class="winamp-pl-title"><i class="fas fa-list-ul"></i> WINAMP PLAYLIST EDITOR</div>
+              <div style="font-size:0.7rem;color:#a0a0c0"><span id="winampPlCount">0</span> Lagu • <span style="color:#34d399">Audio-Only Live</span></div>
+            </div>
+
+            <!-- Quick Search & Smart Radio Mix Bar in Winamp -->
+            <div class="winamp-search-bar" style="flex-wrap:wrap">
+              <div class="input-wrapper" style="flex:1;min-width:200px">
+                <input type="text" class="url-input" id="winampSearchInput" placeholder="Ketik lagu (misal: cinta yang sempurna, peterpan, boomerang)..." style="padding:10px 14px 10px 36px;font-size:0.85rem">
+                <i class="fas fa-search input-icon" style="font-size:14px"></i>
+              </div>
+              <button type="button" class="fetch-btn" id="winampSearchBtn" style="padding:10px 16px;font-size:0.82rem;background:#10b981" title="Cari lagu dan langsung putar alur variasi cerdas (Multi-Band Anti-Monoton)"><i class="fas fa-play"></i> Cari & Putar</button>
+              <button type="button" class="fetch-btn" id="winampRadioBtn" style="padding:10px 16px;font-size:0.82rem;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff" title="Buat Smart Radio Mix: otomatis memuat lagu-lagu hits sejenis yang variatif & tidak berulang!"><i class="fas fa-radio"></i> 📻 Smart Mix</button>
+              <button type="button" class="fetch-btn" id="winampTasteBtn" style="padding:10px 16px;font-size:0.82rem;background:linear-gradient(135deg,#06b6d4,#2563eb);color:#fff" title="Putar alur musik cerdas berdasarkan selera musik & histori YouTube yang sering Anda tonton / unduh"><i class="fas fa-headphones"></i> 🎧 Aliran Selera Saya</button>
+              <button type="button" class="paste-btn" id="winampPasteBtn" title="Tempel URL Langsung"><i class="fas fa-paste"></i></button>
+              <button type="button" class="paste-btn" id="winampClearPlBtn" title="Kosongkan Playlist" style="color:#ef4444"><i class="fas fa-trash"></i></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;margin:2px 0 10px 4px;font-size:0.75rem;color:#94a3b8">
+              <span><i class="fas fa-sparkles" style="color:#a855f7"></i> <b>Smart Multi-Band Active:</b> Otomatis memutar variasi band (Peterpan, Boomerang, Dewa 19, dll.) tanpa duplikasi judul</span>
+            </div>
+
+            <div id="winampLoading" style="display:none;text-align:center;padding:16px;color:#a0a0c0">
+              <span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block"></span>
+              <span style="margin-left:8px;font-size:0.8rem">Menghubungkan ke YouTube live stream (tanpa video)...</span>
+            </div>
+
+            <!-- Playlist Items -->
+            <div class="winamp-pl-list" id="winampPlaylistList">
+              <div class="winamp-pl-empty">
+                <i class="fas fa-music" style="font-size:24px;margin-bottom:8px;opacity:0.5"></i>
+                <p>Playlist Winamp masih kosong.</p>
+                <small>Cari lagu YouTube di atas untuk memutar audio live secara instan tanpa mengunduh berkas & hemat kuota.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Winamp Live Synced Lyrics & Karaoke Window -->
+          <div class="winamp-lyrics-window" id="winampLyricsWindow">
+            <div class="winamp-lyrics-titlebar">
+              <div style="display:flex;align-items:center;gap:6px">
+                <i class="fas fa-microphone-lines" style="color:#a855f7"></i>
+                <span>WINAMP KARAOKE • LIVE SYNCED LYRICS</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span id="winampLyricsStatusBadge" class="winamp-badge lit" style="color:#00ff66;font-size:0.65rem">READY</span>
+                <button type="button" id="winampLyricsCopyBtn" class="winamp-btn" style="padding:2px 8px;font-size:0.65rem" title="Salin Seluruh Lirik Lagu"><i class="fas fa-copy"></i></button>
+              </div>
+            </div>
+
+            <!-- Precision Timing Sync Calibration Toolbar -->
+            <div class="winamp-lyrics-sync-bar">
+              <div style="display:flex;align-items:center;gap:6px;font-size:0.7rem;color:#a0a0c0">
+                <i class="fas fa-stopwatch" style="color:#a855f7"></i>
+                <span>Kalibrasi Vokal:</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:4px">
+                <button type="button" class="winamp-sync-btn" onclick="adjustLyricOffset(-0.5)" title="Percepat Lirik 0.5s (Bila lirik terlalu lambat)"><i class="fas fa-angles-left"></i> -0.5s</button>
+                <button type="button" class="winamp-sync-btn" onclick="adjustLyricOffset(-0.2)" title="Percepat Lirik 0.2s (Bila lirik agak lambat)"><i class="fas fa-angle-left"></i> -0.2s</button>
+                <button type="button" class="winamp-sync-btn winamp-sync-val" id="winampSyncValBtn" onclick="resetLyricOffset()" title="Klik untuk Reset Offset ke 0.0s"><i class="fas fa-bullseye"></i> <span id="winampSyncValLabel">0.0s</span></button>
+                <button type="button" class="winamp-sync-btn" onclick="adjustLyricOffset(0.2)" title="Perlambat Lirik 0.2s (Bila lirik agak cepat)">+0.2s <i class="fas fa-angle-right"></i></button>
+                <button type="button" class="winamp-sync-btn" onclick="adjustLyricOffset(0.5)" title="Perlambat Lirik 0.5s (Bila lirik terlalu cepat)">+0.5s <i class="fas fa-angles-right"></i></button>
+              </div>
+              <div style="font-size:0.68rem;color:#38bdf8;margin-left:auto" id="winampAutoSyncNotice" title="Offset otomatis untuk video YouTube dengan klip/intro">
+                <span>⚡ Auto-Aligned</span>
+              </div>
+            </div>
+
+            <div class="winamp-lyrics-body" id="winampLyricsBody">
+              <div class="winamp-lyrics-placeholder" id="winampLyricsPlaceholder">
+                <i class="fas fa-microphone" style="font-size:32px;color:#a855f7;margin-bottom:12px;opacity:0.6"></i>
+                <h4 style="color:#e2e8f0;font-size:0.95rem;margin-bottom:6px">Lirik Sinkron Berjalan</h4>
+                <p style="color:#64748b;font-size:0.8rem;max-width:280px;margin:0 auto">Putar lagu apa saja di Winamp. Lirik akan muncul dan bergulir otomatis mengikuti alunan vokal penyanyi secara real-time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="section" id="loadingSection">
+        <div style="text-align:center;padding:20px;color:var(--text-secondary)">
+          <span class="spinner" style="width:32px;height:32px;border-width:3px"></span>
+          <p style="margin-top:10px;font-size:0.85rem" id="loadingText">Fetching video info...</p>
+        </div>
+      </div>
+
+      <!-- Video Info -->
+      <div class="section" id="videoInfoSection">
+        <div class="video-info-inner">
+          <div class="video-thumbnail">
+            <img id="vThumb" src="" alt="" />
+            <span class="badge-overlay" id="vTypeBadge"></span>
+            <span class="duration-badge" id="vDuration"></span>
+          </div>
+          <div class="video-details">
+            <h3 id="vTitle"></h3>
+            <div class="video-meta">
+              <span><i class="fas fa-user"></i> <span id="vAuthor"></span></span>
+              <span id="vViewsWrap"><i class="fas fa-eye"></i> <span id="vViews"></span></span>
+              <span id="vCountWrap" style="display:none"><i class="fas fa-list"></i> <span id="vCount"></span> videos</span>
+            </div>
+          </div>
+        </div>
+        <!-- Playlist items toolbar & list -->
+        <div id="playlistHeader" style="display:none;margin-top:14px;padding:8px 12px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid var(--glass-border)">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+            <span style="font-size:0.8rem;font-weight:700;color:var(--text-primary)"><i class="fas fa-tasks" style="color:var(--accent3)"></i> Pilih Video yang Ingin Diunduh:</span>
+            <span id="pvSelectedCount" style="font-size:0.75rem;color:var(--accent3);font-weight:600">Terpilih: 0 video</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button type="button" id="btnSelectAll" style="padding:4px 10px;font-size:0.72rem;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600"><i class="fas fa-check-square"></i> Pilih Semua</button>
+            <button type="button" id="btnDeselectAll" style="padding:4px 10px;font-size:0.72rem;background:rgba(255,255,255,0.1);color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:600"><i class="far fa-square"></i> Batal Semua</button>
+          </div>
+        </div>
+        <div class="playlist-videos" id="playlistVideos" style="display:none"></div>
+      </div>
+
+      <!-- Format & Quality -->
+      <div class="section" id="optionsSection">
+        <div class="options-row">
+          <div class="option-group">
+            <h4><i class="fas fa-file-audio"></i> Format</h4>
+            <div class="option-cards">
+              <div class="opt-card">
+                <input type="radio" name="format" id="fMp3" value="mp3" checked />
+                <label for="fMp3">
+                  <span class="opt-main">MP3</span>
+                  <span class="opt-sub">Audio Only</span>
+                </label>
+              </div>
+              <div class="opt-card">
+                <input type="radio" name="format" id="fMp4" value="mp4" />
+                <label for="fMp4">
+                  <span class="opt-main">MP4</span>
+                  <span class="opt-sub">Video + Audio</span>
+                </label>
+              </div>
+              <div class="opt-card">
+                <input type="radio" name="format" id="fSrt" value="srt" />
+                <label for="fSrt">
+                  <span class="opt-main">SRT</span>
+                  <span class="opt-sub">Subtitle Saja</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="option-group" id="qualityGroup">
+            <h4><i class="fas fa-sliders-h"></i> Quality</h4>
+            <div class="option-cards" id="qualityCards"></div>
+          </div>
+        </div>
+
+        <!-- Turbo Speed Mode Toggle -->
+        <div class="turbo-box">
+          <div class="turbo-left">
+            <div class="turbo-icon"><i class="fas fa-tachometer-alt"></i></div>
+            <div>
+              <div class="turbo-title">
+                <span>Mode Turbo Akselerasi (8-Thread Download)</span>
+                <span class="turbo-badge" id="turboBadge">Aktif ⚡</span>
+              </div>
+              <div class="turbo-desc">Download paralel 8 chunk stream secara simultan & optimasi multi-core CPU FFmpeg untuk kecepatan maksimal.</div>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="turboToggle" checked title="Aktifkan/Nonaktifkan Mode Turbo">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Studio Remaster & Crystal Clear HQ Audio Enhancer Toggle -->
+        <div class="pro-toggle-card" style="border: 1px solid rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.08);">
+          <div class="pro-toggle-left">
+            <div class="pro-toggle-icon" style="color: #a78bfa; font-size: 1.25rem;"><i class="fas fa-wand-magic-sparkles"></i></div>
+            <div class="pro-toggle-text">
+              <h5 style="color: #c4b5fd; display:flex; align-items:center; gap:8px;">
+                Studio Remaster & Crystal Clear HQ Audio Enhancer
+                <span style="font-size:0.65rem; background:#8b5cf6; color:#fff; padding:2px 7px; border-radius:12px; font-weight:600;">HQ AUDIO PRO</span>
+              </h5>
+              <p>Otomatis menjernihkan audio mendem/jadul, memotong rumble noise (&lt;35Hz), mendongkrak kejernihan vokal (+2.8dB), dan <strong>menyetabilkan volume suara pelan ke standar internasional siaran (EBU R128 / Spotify -14 LUFS)</strong> tanpa suara sember/pecah.</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="loudnormToggle" title="Aktifkan Studio Remaster & Normalisasi Suara">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Subtitle Extract / Embed Toggle -->
+        <div class="pro-toggle-card">
+          <div class="pro-toggle-left">
+            <div class="pro-toggle-icon"><i class="fas fa-closed-captioning"></i></div>
+            <div class="pro-toggle-text">
+              <h5>Ekstraksi / Embed Subtitle (Bahasa Indonesia & Inggris)</h5>
+              <p>Sertakan subtitle terjemahan (.srt) dan gabungkan ke dalam video MP4 secara otomatis jika tersedia dari YouTube.</p>
+            </div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="subtitleToggle" title="Sertakan Subtitle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- Batch Limit Selection (Only for Playlists / Mixes) -->
+        <div class="batch-limit-group" id="batchLimitGroup" style="display:none;margin-top:14px">
+          <h4 style="font-size:0.78rem;font-weight:600;color:var(--text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.8px"><i class="fas fa-filter"></i> Batasan Jumlah Unduhan Playlist/Mix</h4>
+          <p class="section-desc" style="margin-bottom:8px">YouTube Mix bersifat dinamis (algoritma radio). Pilih berapa lagu yang ingin diunduh:</p>
+          <div class="option-cards">
+            <div class="opt-card">
+              <input type="radio" name="batchLimit" id="limAll" value="0" checked />
+              <label for="limAll">
+                <span class="opt-main">Semua</span>
+                <span class="opt-sub">Unduh Semuanya</span>
+              </label>
+            </div>
+            <div class="opt-card">
+              <input type="radio" name="batchLimit" id="lim15" value="15" />
+              <label for="lim15">
+                <span class="opt-main">15 Video</span>
+                <span class="opt-sub">Paling Atas</span>
+              </label>
+            </div>
+            <div class="opt-card">
+              <input type="radio" name="batchLimit" id="lim30" value="30" />
+              <label for="lim30">
+                <span class="opt-main">30 Video</span>
+                <span class="opt-sub">Standar Album</span>
+              </label>
+            </div>
+            <div class="opt-card">
+              <input type="radio" name="batchLimit" id="lim50" value="50" />
+              <label for="lim50">
+                <span class="opt-main">50 Video</span>
+                <span class="opt-sub">Koleksi Banyak</span>
+              </label>
+            </div>
+            <div class="opt-card">
+              <input type="radio" name="batchLimit" id="lim100" value="100" />
+              <label for="lim100">
+                <span class="opt-main">100 Video</span>
+                <span class="opt-sub">Maks 100</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trim Tool (Cut duration) -->
+        <div class="trim-tool-card" id="trimToolCard" style="margin-top:16px;padding:12px 14px;background:rgba(0,0,0,0.25);border:1px solid var(--glass-border);border-radius:8px">
+          <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" id="trimToggleHeader">
+            <span style="font-size:0.84rem;font-weight:700;color:var(--text-primary);display:flex;align-items:center;gap:8px">
+              <i class="fas fa-cut" style="color:var(--accent3)"></i> Potong Durasi Lagu / Video (Trim) Opsional
+            </span>
+            <span id="trimStatusBadge" style="font-size:0.7rem;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,0.08);color:var(--text-muted)">Nonaktif</span>
+          </div>
+          <div id="trimBody" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06)">
+            <p style="font-size:0.74rem;color:var(--text-secondary);margin-bottom:10px">
+              Ambil bagian tertentu saja (misal: reff lagu atau ringtone). Masukkan waktu mulai & selesai:
+            </p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <div style="flex:1;min-width:140px">
+                <label style="font-size:0.72rem;color:var(--text-muted);display:block;margin-bottom:4px">Waktu Mulai (Contoh: 00:30 atau 01:15):</label>
+                <input type="text" id="trimStart" placeholder="00:00" style="width:100%;padding:8px 12px;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:6px;color:#fff;font-size:0.85rem;font-family:inherit" />
+              </div>
+              <div style="flex:1;min-width:140px">
+                <label style="font-size:0.72rem;color:var(--text-muted);display:block;margin-bottom:4px">Waktu Selesai (Contoh: 02:45):</label>
+                <input type="text" id="trimEnd" placeholder="Selesai penuh" style="width:100%;padding:8px 12px;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:6px;color:#fff;font-size:0.85rem;font-family:inherit" />
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button type="button" id="btnClearTrim" style="padding:4px 10px;font-size:0.72rem;background:transparent;border:1px solid var(--glass-border);color:var(--text-muted);border-radius:4px;cursor:pointer">Reset Waktu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Convert Button -->
+      <div class="section" id="convertSection">
+        <button class="convert-btn" id="convertBtn">
+          <i class="fas fa-bolt"></i>
+          <span id="convertBtnText">Convert & Download</span>
+        </button>
+      </div>
+
+      <!-- Progress -->
+      <div class="section" id="progressSection">
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-info">
+          <span id="progressStatus">Processing...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+      </div>
+
+      <!-- Download (Single) -->
+      <div class="section" id="downloadSection">
+        <div class="download-area">
+          <div class="success-icon"><i class="fas fa-check"></i></div>
+          <h3 id="dlSuccessTitle">Download Ready!</h3>
+          <p class="file-info" id="dlFileInfo"></p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">
+            <a class="dl-btn" id="dlBtn" href="#" download><i class="fas fa-download"></i> Download</a>
+            <button class="dl-btn" id="playSingleBtn" type="button" style="background:var(--accent)"><i class="fas fa-play"></i> Putar Langsung</button>
+            <button class="dl-btn" id="qrSingleBtn" type="button" style="background:#059669"><i class="fas fa-qrcode"></i> Share ke HP</button>
+            <button class="new-btn" id="openFolderSingleBtn" type="button" style="margin-top:0"><i class="fas fa-folder-open"></i> Buka Folder di PC</button>
+          </div>
+          <br />
+          <button class="new-btn" id="newBtn"><i class="fas fa-redo"></i> Convert Another</button>
+        </div>
+      </div>
+
+      <!-- Batch Download -->
+      <div class="section" id="batchDownloadSection">
+        <div class="download-area">
+          <div class="success-icon"><i class="fas fa-check-double"></i></div>
+          <h3 id="batchDoneTitle">Batch Download Complete!</h3>
+          <p class="file-info" id="batchInfo"></p>
+          
+          <!-- Download All Controls -->
+          <div class="batch-actions">
+            <a class="dl-all-zip-btn" id="downloadZipBtn" href="#" download>
+              <i class="fas fa-file-archive"></i>
+              <span>Unduh Semua Sekaligus (.ZIP)</span>
+            </a>
+            <button class="dl-all-individual-btn" id="downloadAllFilesBtn">
+              <i class="fas fa-layer-group"></i>
+              <span>Unduh Semua Satu per Satu</span>
+            </button>
+            <button class="dl-all-individual-btn" id="qrBatchBtn" style="background:rgba(16,185,129,0.15);border-color:#10b981;color:#6ee7b7">
+              <i class="fas fa-qrcode"></i>
+              <span>Share ZIP ke HP</span>
+            </button>
+            <button class="dl-all-individual-btn" id="openFolderBatchBtn" style="background:rgba(255,255,255,0.08);border-color:var(--glass-border)">
+              <i class="fas fa-folder-open"></i>
+              <span>Buka Folder di PC</span>
+            </button>
+          </div>
+
+          <div class="batch-files-header">
+            <span>Daftar File (<span id="batchFilesCount">0</span>):</span>
+            <span style="color:var(--text-muted);font-size:0.75rem">Bisa unduh/putar per file atau klik tombol ZIP di atas</span>
+          </div>
+          <div class="batch-files" id="batchFiles"></div>
+          <button class="new-btn" id="newBatchBtn" style="margin-top:14px"><i class="fas fa-redo"></i> Convert Another</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="history-section">
+      <div class="history-header">
+        <h3><i class="fas fa-history"></i> Recent Downloads</h3>
+        <div style="display:flex;gap:8px">
+          <button class="clear-history-btn" id="exportM3uBtn" style="background:rgba(59,130,246,0.15);color:#60a5fa;border-color:rgba(59,130,246,0.3)"><i class="fas fa-list-ol"></i> Export .M3U</button>
+          <button class="clear-history-btn" id="clearHistoryBtn">Clear</button>
+        </div>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="history-empty"><i class="fas fa-inbox"></i><p>No downloads yet</p></div>
+      </div>
+    </div>
+
+    <footer style="text-align:center;padding:24px 0;color:var(--text-muted);font-size:0.75rem">
+      <p>© 2026 Khanza.NET YT Downloader Pro — A Product of PT Khanza Digital Nusantara</p>
+    </footer>
+  </div>
+
+  <!-- Floating In-Browser Media Player -->
+  <div class="media-player-drawer" id="mediaPlayerDrawer" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:92%;max-width:580px;background:rgba(18,18,42,0.96);backdrop-filter:blur(16px);border:1px solid var(--accent);border-radius:14px;padding:14px 18px;box-shadow:0 12px 40px rgba(0,0,0,0.7);z-index:9999;animation:slideUp 0.3s ease">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1">
+        <div style="width:38px;height:38px;border-radius:8px;background:var(--gradient-1);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0" id="playerThumbIcon">
+          <i class="fas fa-play" id="playerStatusIcon"></i>
+        </div>
+        <div style="min-width:0;flex:1">
+          <div id="playerTitle" style="font-size:0.86rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff">Memutar Media</div>
+          <div id="playerSub" style="font-size:0.72rem;color:var(--text-secondary)">Khanza.NET Stream</div>
+        </div>
+      </div>
+      <button id="closePlayerBtn" type="button" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:4px"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="videoContainer" style="display:none;margin-bottom:10px;text-align:center">
+      <video id="webVideoPlayer" controls style="width:100%;max-height:240px;border-radius:8px;background:#000"></video>
+    </div>
+    <audio id="webAudioPlayer" controls style="width:100%;height:38px;accent-color:var(--accent)"></audio>
+  </div>
+
+  <!-- QR Code Share Modal -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-card" style="max-width:440px">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-qrcode" style="color:var(--success)"></i>
+          <span>Share File ke Smartphone (WiFi Lokal)</span>
+        </div>
+        <button class="modal-close" id="closeQrModalBtn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body qr-box">
+        <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:12px">
+          Buka kamera atau Google Lens di HP Anda (pastikan terhubung ke jaringan Wi-Fi yang sama) lalu scan QR Code ini:
+        </p>
+        <div class="qr-card-img">
+          <img id="qrImage" src="" alt="QR Code" style="width:200px;height:200px;display:block" />
+        </div>
+        <div style="font-size:0.78rem;font-weight:700;color:#fff;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="qrFileName">File Download</div>
+        <div class="qr-url-box">
+          <input type="text" class="qr-url-input" id="qrUrlInput" readonly />
+          <button type="button" class="qr-copy-btn" id="qrCopyBtn"><i class="fas fa-copy"></i> Salin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ========== DOM ==========
+const $=s=>document.querySelector(s);
+const urlInput=$('#urlInput');
+const clearBtn=$('#clearBtn');
+const pasteBtn=$('#pasteBtn');
+const fetchBtn=$('#fetchBtn');
+const loadingSection=$('#loadingSection');
+const videoInfoSection=$('#videoInfoSection');
+const optionsSection=$('#optionsSection');
+const convertSection=$('#convertSection');
+const convertBtn=$('#convertBtn');
+const convertBtnText=$('#convertBtnText');
+const progressSection=$('#progressSection');
+const progressBar=$('#progressBar');
+const progressStatus=$('#progressStatus');
+const progressPercent=$('#progressPercent');
+const downloadSection=$('#downloadSection');
+const batchDownloadSection=$('#batchDownloadSection');
+
+// Modal Elements
+const settingsModal=$('#settingsModal');
+const openSettingsBtn=$('#openSettingsBtn');
+const closeSettingsBtn=$('#closeSettingsBtn');
+const badgeBypassTrigger=$('#badgeBypassTrigger');
+const updateEngineBtn=$('#updateEngineBtn');
+const updateBtnText=$('#updateBtnText');
+const updateLog=$('#updateLog');
+const testBypassBtn=$('#testBypassBtn');
+const testResult=$('#testResult');
+
+// ========== STATE ==========
+let currentInfo=null;
+let isProcessing=false;
+let systemConfig=null;
+let history=JSON.parse(localStorage.getItem('yt_dl_history')||'[]');
+let lastCompletedJobId=null;
+let lastCompletedFilename=null;
+let lastCompletedTitle=null;
+let lastCompletedFormat=null;
+
+const MP3_QUALITIES=[
+  {value:'320',label:'320k',sub:'Best',badge:'★'},
+  {value:'256',label:'256k',sub:'High'},
+  {value:'192',label:'192k',sub:'Standard'},
+  {value:'128',label:'128k',sub:'Good'},
+  {value:'64',label:'64k',sub:'Small'},
+];
+const MP4_QUALITIES=[
+  {value:'2160',label:'4K',sub:'2160p',badge:'★'},
+  {value:'1080',label:'FHD',sub:'1080p'},
+  {value:'720',label:'HD',sub:'720p'},
+  {value:'480',label:'SD',sub:'480p'},
+  {value:'360',label:'Low',sub:'360p'},
+];
+
+// ========== TOAST ==========
+function toast(type,title,msg){
+  const icons={success:'fas fa-check-circle',error:'fas fa-exclamation-circle',warning:'fas fa-exclamation-triangle',info:'fas fa-info-circle'};
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<i class="toast-icon ${icons[type]}"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button><div class="toast-progress"></div>`;
+  $('#toastContainer').appendChild(t);
+  setTimeout(()=>{t.classList.add('removing');setTimeout(()=>t.remove(),300)},4000);
+}
+
+// ========== QUALITY CARDS ==========
+function renderQualityCards(){
+  const format=document.querySelector('input[name="format"]:checked')?.value||'mp3';
+  const qualities=format==='mp3'?MP3_QUALITIES:MP4_QUALITIES;
+  const container=$('#qualityCards');
+  container.innerHTML=qualities.map((q,i)=>`
+    <div class="opt-card">
+      <input type="radio" name="quality" id="q_${q.value}" value="${q.value}" ${i===0?'checked':''} />
+      <label for="q_${q.value}">
+        <span class="opt-main">${q.label}</span>
+        <span class="opt-sub">${q.sub}</span>
+        ${q.badge?`<span class="opt-badge">${q.badge} Best</span>`:''}
+      </label>
+    </div>
+  `).join('');
+}
+renderQualityCards();
+document.querySelectorAll('input[name="format"]').forEach(r=>r.addEventListener('change',renderQualityCards));
+
+// ========== SECTIONS ==========
+function hideAll(){
+  [loadingSection,videoInfoSection,optionsSection,convertSection,progressSection,downloadSection,batchDownloadSection].forEach(s=>s.classList.remove('visible'));
+}
+
+function showSections(...sections){
+  sections.forEach(s=>s.classList.add('visible'));
+}
+
+function resetUI(){
+  localStorage.removeItem('yt_active_job');
+  hideAll();
+  urlInput.value='';
+  urlInput.classList.remove('valid','invalid');
+  clearBtn.classList.remove('visible');
+  currentInfo=null;
+  isProcessing=false;
+  convertBtn.disabled=false;
+  convertBtnText.textContent='Convert & Download';
+  progressBar.style.width='0%';
+  progressBar.classList.remove('indeterminate');
+  urlInput.focus();
+}
+
+// ========== FETCH INFO ==========
+async function fetchInfo(){
+  const url=urlInput.value.trim();
+  if(!url){toast('warning','Perhatian','Masukkan URL YouTube terlebih dahulu');return;}
+  if(isProcessing)return;
+
+  hideAll();
+  showSections(loadingSection);
+  fetchBtn.disabled=true;
+  $('#loadingText').textContent='Mengambil informasi video & membypass proteksi...';
+
+  try{
+    const res=await fetch('/api/info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error||'Gagal mengambil info video');
+
+    currentInfo=data;
+    urlInput.classList.add('valid');
+    urlInput.classList.remove('invalid');
+
+    // Populate info
+    $('#vThumb').src=data.thumbnail;
+    $('#vTitle').textContent=data.title;
+    $('#vAuthor').textContent=data.author;
+
+    if(data.type==='single'){
+      $('#vTypeBadge').textContent='VIDEO';
+      $('#vTypeBadge').className='badge-overlay badge-single';
+      $('#vDuration').textContent=data.durationFormatted;
+      $('#vDuration').style.display='';
+      $('#vViews').textContent=data.views+' views';
+      $('#vViewsWrap').style.display='';
+      $('#vCountWrap').style.display='none';
+      $('#playlistVideos').style.display='none';
+      if($('#playlistHeader')) $('#playlistHeader').style.display='none';
+      $('#batchLimitGroup').style.display='none';
+      if($('#trimToolCard')) $('#trimToolCard').style.display='block';
+      convertBtnText.textContent='Convert & Download';
+      convertBtn.className='convert-btn';
+    } else {
+      const isMix = data.url.includes('list=RD');
+      $('#vTypeBadge').textContent=isMix ? `MIX (${data.count}+)` : `${data.count} VIDEOS`;
+      $('#vTypeBadge').className='badge-overlay badge-playlist';
+      $('#vDuration').style.display='none';
+      $('#vViewsWrap').style.display='none';
+      $('#vCountWrap').style.display='';
+      $('#vCount').textContent=isMix ? `${data.count}+ (Radio Mix Dinamis)` : data.count;
+      $('#batchLimitGroup').style.display='block';
+      if($('#trimToolCard')) $('#trimToolCard').style.display='none';
+      // Render playlist with checkboxes
+      const pv=$('#playlistVideos');
+      const ph=$('#playlistHeader');
+      pv.style.display='block';
+      if(ph) ph.style.display='block';
+      pv.innerHTML=data.videos.map(v=>`
+        <label class="pv-item" style="cursor:pointer;display:flex;align-items:center;gap:10px">
+          <input type="checkbox" class="pv-checkbox" data-index="${v.index}" checked style="accent-color:var(--accent);width:16px;height:16px;cursor:pointer;flex-shrink:0" />
+          <span class="pv-index">${v.index}</span>
+          <span class="pv-title" style="flex:1">${escapeHtml(v.title)}</span>
+          <span class="pv-dur">${v.durationFormatted||''}</span>
+        </label>
+      `).join('');
+      updatePlaylistSelection();
+      convertBtn.className='convert-btn batch';
+    }
+
+    hideAll();
+    showSections(videoInfoSection,optionsSection,convertSection);
+    toast('success','Ditemukan!',data.type==='single'?`"${data.title}"`:`Playlist: ${data.count} video`);
+  }catch(err){
+    hideAll();
+    urlInput.classList.add('invalid');
+    toast('error','Error',err.message);
+  }finally{
+    fetchBtn.disabled=false;
+  }
+}
+
+// ========== CONVERT ==========
+async function convert(){
+  if(!currentInfo||isProcessing)return;
+  isProcessing=true;
+  convertBtn.disabled=true;
+
+  const format=document.querySelector('input[name="format"]:checked')?.value||'mp3';
+  const quality=document.querySelector('input[name="quality"]:checked')?.value||'192';
+
+  const isBatch=currentInfo.type==='playlist';
+  const limit=isBatch?(document.querySelector('input[name="batchLimit"]:checked')?.value||'0'):'0';
+  let selectedIndices = null;
+  if(isBatch){
+    const checked = Array.from(document.querySelectorAll('.pv-checkbox:checked')).map(cb => parseInt(cb.dataset.index, 10));
+    if(checked.length > 0) {
+      selectedIndices = checked;
+    }
+  }
+
+  const trimStart = $('#trimStart')?.value?.trim() || '';
+  const trimEnd = $('#trimEnd')?.value?.trim() || '';
+  const loudnorm = $('#loudnormToggle')?.checked || false;
+  const subtitles = $('#subtitleToggle')?.checked || false;
+
+  // Show progress
+  hideAll();
+  showSections(videoInfoSection,progressSection);
+  progressBar.style.width='0%';
+  progressBar.classList.add('indeterminate');
+  progressStatus.textContent=isBatch?'Memulai batch download & bypass...':'Mengunduh & mengonversi stream...';
+  progressPercent.textContent='';
+
+  try{
+    if(isBatch){
+      const res=await fetch('/api/convert-batch',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({url:currentInfo.url,title:currentInfo.title,format,quality,limit,selectedIndices,loudnorm,subtitles})
+      });
+      const data=await res.json();
+      if(!res.ok)throw new Error(data.error||'Batch gagal dimulai');
+
+      const jobId=data.jobId;
+      localStorage.setItem('yt_active_job', JSON.stringify({
+        jobId,
+        isBatch: true,
+        title: currentInfo.title,
+        url: currentInfo.url,
+        format,
+        quality,
+        count: currentInfo.count || 0
+      }));
+
+      await pollBatchProgress(jobId);
+    }else{
+      const res=await fetch('/api/convert',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({url:currentInfo.url,title:currentInfo.title,format,quality,trimStart,trimEnd,loudnorm,subtitles})
+      });
+      const data=await res.json();
+      if(!res.ok)throw new Error(data.error||'Konversi gagal dimulai');
+
+      if (data.status === 'started' || (data.jobId && !data.filename)) {
+        await pollSingleProgress(data.jobId);
+      } else {
+        renderSingleCompleted(data);
+      }
+    }
+  }catch(err){
+    console.error('Conversion catch:', err);
+    let recovered = false;
+    const activeRaw = localStorage.getItem('yt_active_job');
+    if (activeRaw) {
+      try {
+        const active = JSON.parse(activeRaw);
+        if (active.jobId) {
+          const checkRes = await fetch(`/api/batch-files/${active.jobId}`);
+          if (checkRes.ok) {
+            const checkData = await checkRes.json();
+            if (checkData.files && checkData.files.length > 0) {
+              recovered = true;
+              renderBatchCompleted(active.jobId, checkData.files);
+              toast('warning', 'Proses Berhenti Sebagian', `${checkData.files.length} file berhasil tersimpan dan siap diunduh.`);
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    if (!recovered) {
+      hideAll();
+      showSections(videoInfoSection,optionsSection,convertSection);
+      toast('error','Kendala Unduhan', err.message || 'Proses unduhan terganggu');
+    }
+  }finally{
+    isProcessing=false;
+    convertBtn.disabled=false;
+    convertBtnText.textContent='Convert & Download';
+    progressBar.classList.remove('indeterminate');
+  }
+}
+
+// Render single completed view
+function renderSingleCompleted(data) {
+  lastCompletedJobId = data.jobId;
+  lastCompletedFilename = data.filename;
+  lastCompletedTitle = data.title;
+  lastCompletedFormat = data.format;
+
+  hideAll();
+  showSections(downloadSection);
+  $('#dlSuccessTitle').textContent = `Download Ready!`;
+  $('#dlFileInfo').textContent = `${data.format} • ${data.quality || ''} • ${data.size}`;
+  $('#dlBtn').href = `/api/download/${data.jobId}/${encodeURIComponent(data.filename)}`;
+  $('#dlBtn').download = data.filename;
+
+  // Attach play & folder buttons
+  $('#playSingleBtn').onclick = () => openMediaPlayer(data.jobId, data.filename, data.title, data.format);
+  $('#openFolderSingleBtn').onclick = () => openFolder(data.jobId);
+
+  addToHistory({ title: data.title, format: data.format, quality: data.quality, size: data.size, jobId: data.jobId, filename: data.filename });
+  toast('success', 'Berhasil!', `"${data.title}" siap diunduh (${data.size})`);
+}
+
+// Live polling for single download with real-time percentage
+async function pollSingleProgress(jobId) {
+  return new Promise((resolve, reject) => {
+    let consecutiveErrors = 0;
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/progress/${jobId}`);
+        if (!res.ok) {
+          consecutiveErrors++;
+          if (consecutiveErrors > 15) {
+            clearInterval(interval);
+            reject(new Error('Koneksi terputus saat memeriksa status download'));
+          }
+          return;
+        }
+
+        consecutiveErrors = 0;
+        const data = await res.json();
+
+        if (data.status === 'downloading') {
+          const prog = Math.min(Math.max(data.progress || 0, 0), 99);
+          progressBar.classList.remove('indeterminate');
+          progressBar.style.width = prog.toFixed(1) + '%';
+          progressPercent.textContent = Math.round(prog) + '%';
+          progressStatus.textContent = data.phase || `Mengunduh stream: ${prog.toFixed(1)}% ${data.speed ? `(${data.speed})` : ''} ${data.eta ? `• Sisa waktu: ${data.eta}` : ''}`;
+        } else if (data.status === 'converting') {
+          progressBar.classList.remove('indeterminate');
+          progressBar.style.width = '98%';
+          progressPercent.textContent = '98%';
+          progressStatus.textContent = data.phase || 'Sedang memproses audio FFmpeg & menyematkan cover album...';
+        } else if (data.status === 'completed') {
+          clearInterval(interval);
+          progressBar.style.width = '100%';
+          progressPercent.textContent = '100%';
+          progressStatus.textContent = 'Selesai 100%! Menyiapkan file unduhan...';
+          setTimeout(() => {
+            renderSingleCompleted(data);
+            resolve(data);
+          }, 300);
+        } else if (data.status === 'error') {
+          clearInterval(interval);
+          reject(new Error(data.error || 'Proses konversi gagal'));
+        }
+      } catch (err) {
+        console.error('Polling single progress error:', err);
+      }
+    }, 350);
+  });
+}
+
+// Render batch completed view
+function renderBatchCompleted(jobId, files) {
+  localStorage.removeItem('yt_active_job');
+  hideAll();
+  showSections(batchDownloadSection);
+  $('#batchDoneTitle').textContent = `${files.length} File Siap!`;
+  $('#batchInfo').textContent = `Total: ${files.length} file berhasil diunduh`;
+  $('#batchFilesCount').textContent = files.length;
+
+  // Setup ZIP download button
+  const zipBtn = $('#downloadZipBtn');
+  zipBtn.href = `/api/download-zip/${jobId}`;
+  zipBtn.download = `YT_Download_Bundle_${jobId}.zip`;
+
+  // Setup Open Folder in Explorer
+  const openFBtn = $('#openFolderBatchBtn');
+  if (openFBtn) openFBtn.onclick = () => openFolder(jobId);
+
+  // Setup Sequential Download All button
+  $('#downloadAllFilesBtn').onclick = () => {
+    toast('info', 'Mulai Mengunduh', `Mengunduh ${files.length} file secara berurutan...`);
+    files.forEach((f, idx) => {
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = `/api/download/${jobId}/${encodeURIComponent(f.filename)}`;
+        a.download = f.filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }, idx * 600);
+    });
+  };
+
+  $('#batchFiles').innerHTML = files.map(f => `
+    <div class="bf-item">
+      <i class="bf-icon fas fa-${f.filename.endsWith('.mp3') ? 'music' : 'video'}"></i>
+      <span class="bf-name" title="${escapeHtml(f.filename)}">${escapeHtml(f.filename)}</span>
+      <span class="bf-size">${f.size}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button class="bf-play" type="button" onclick="openMediaPlayer('${jobId}', '${escapeHtml(f.filename)}', '${escapeHtml(f.filename)}', '${f.filename.endsWith('.mp3')?'MP3':'MP4'}')" title="Putar langsung"><i class="fas fa-play"></i> Putar</button>
+        <a class="bf-dl" href="/api/download/${jobId}/${encodeURIComponent(f.filename)}" download="${f.filename}" title="Download file ini"><i class="fas fa-download"></i></a>
+      </div>
+    </div>
+  `).join('');
+
+  addToHistory({ title: `Batch: ${files.length} files`, format: 'BATCH', quality: '', size: '', jobId, isBatch: true, fileCount: files.length });
+}
+
+async function pollBatchProgress(jobId){
+  let consecutiveErrors = 0;
+  return new Promise((resolve,reject)=>{
+    const interval=setInterval(async()=>{
+      try{
+        const res=await fetch(`/api/progress/${jobId}`);
+        if (!res.ok) {
+          consecutiveErrors++;
+          // Allow up to 15 retries (30 seconds) of network drops before declaring failure
+          if (consecutiveErrors > 15) {
+            clearInterval(interval);
+            reject(new Error('Koneksi ke server terputus saat mengunduh'));
+            return;
+          }
+          return;
+        }
+
+        consecutiveErrors = 0;
+        const data=await res.json();
+
+        if(data.status==='error'){
+          clearInterval(interval);
+          // Check if any partial files were saved before throwing
+          try {
+            const fRes = await fetch(`/api/batch-files/${jobId}`);
+            if (fRes.ok) {
+              const fData = await fRes.json();
+              if (fData.files && fData.files.length > 0) {
+                renderBatchCompleted(jobId, fData.files);
+                resolve();
+                return;
+              }
+            }
+          } catch(e) {}
+          reject(new Error(data.error||'Proses unduhan playlist mengalami kendala'));
+          return;
+        }
+
+        progressBar.classList.remove('indeterminate');
+        progressBar.style.width=Math.min(data.progress||0,100)+'%';
+        progressStatus.textContent=data.total?`Mengunduh ${data.completed||0}/${data.total} video...`:'Memproses unduhan stream...';
+        progressPercent.textContent=Math.round(data.progress||0)+'%';
+
+        if(data.status==='completed'){
+          clearInterval(interval);
+          const fRes=await fetch(`/api/batch-files/${jobId}`);
+          const fData=await fRes.json();
+          renderBatchCompleted(jobId, fData.files || []);
+          toast('success','Batch Selesai!',`${(fData.files||[]).length} file siap diunduh`);
+          resolve();
+        }
+      }catch(e){
+        consecutiveErrors++;
+        if (consecutiveErrors > 15) {
+          clearInterval(interval);
+          reject(new Error('Koneksi terputus ke backend'));
+        }
+      }
+    },2000);
+
+    // Timeout: 6 hours (accommodate large 300+ playlist downloads)
+    setTimeout(()=>{clearInterval(interval);reject(new Error('Waktu unduh melebihi batas (6 jam)'))},6*60*60*1000);
+  });
+}
+
+// ========== SYSTEM STATUS & BYPASS SETTINGS ==========
+async function loadSystemStatus(){
+  try{
+    const res=await fetch('/api/system-status');
+    const data=await res.json();
+    systemConfig=data;
+
+    // Update tags
+    $('#topEngineVer').textContent=`yt-dlp v${data.version}`;
+    $('#modalEngineVer').textContent=`v${data.version}`;
+    $('#modalFfmpegStatus').textContent=data.ffmpeg?'Aktif ✅':'Tidak Terdeteksi ⚠️';
+    $('#modalFfmpegStatus').className=data.ffmpeg?'status-val text-success':'status-val text-warning';
+
+    if($('#modalDbStatus')){
+      $('#modalDbStatus').textContent = data.database || 'SQLite (Aktif)';
+    }
+
+    const activeProfile=data.profiles.find(p=>p.id===data.config.client);
+    $('#modalActiveProfile').textContent=activeProfile?activeProfile.name:data.config.client;
+
+    if(data.config && data.config.turboMode !== undefined){
+      $('#turboToggle').checked = data.config.turboMode;
+      $('#turboBadge').textContent = data.config.turboMode ? 'Aktif ⚡' : 'Nonaktif';
+      $('#turboBadge').style.background = data.config.turboMode ? 'var(--gradient-green)' : 'rgba(255,255,255,0.2)';
+    }
+
+    // Render profiles
+    const list=$('#profileOptionsList');
+    list.innerHTML=data.profiles.map(p=>`
+      <div class="profile-item ${p.id===data.config.client?'active':''}" onclick="setBypassProfile('${p.id}')">
+        <input type="radio" name="profileOpt" class="profile-radio" ${p.id===data.config.client?'checked':''} />
+        <div class="profile-info">
+          <div class="profile-name">${p.name}</div>
+          <div class="profile-desc">${p.desc}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Render browser cookies options
+    if (data.browserOptions) {
+      const bList = $('#browserOptionsList');
+      if (bList) {
+        const curBrowser = (data.config && data.config.browserCookies) || 'none';
+        bList.innerHTML = data.browserOptions.map(b => `
+          <div class="profile-item ${b.id === curBrowser ? 'active' : ''}" onclick="setBrowserCookies('${b.id}')">
+            <input type="radio" name="browserOpt" class="profile-radio" ${b.id === curBrowser ? 'checked' : ''} />
+            <div class="profile-info">
+              <div class="profile-name">${b.name}</div>
+              <div class="profile-desc">${b.desc}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    if (data.config) {
+      if (data.config.autoFallback !== undefined && $('#autoFallbackToggle')) {
+        $('#autoFallbackToggle').checked = data.config.autoFallback;
+      }
+      if (data.config.smartDelay !== undefined && $('#smartDelayToggle')) {
+        $('#smartDelayToggle').checked = data.config.smartDelay;
+      }
+    }
+  }catch(e){
+    console.error('Error loading system status',e);
+  }
+}
+
+async function setBrowserCookies(browserId) {
+  try {
+    const res = await fetch('/api/bypass-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ browserCookies: browserId })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast('success', 'Cookies Diperbarui', browserId === 'none' ? 'Bypass cookies dinonaktifkan (mode standar)' : `Menggunakan cookies sesi dari browser: ${browserId}`);
+      await loadSystemStatus();
+    } else {
+      toast('error', 'Gagal', data.error);
+    }
+  } catch (err) {
+    toast('error', 'Error', err.message);
+  }
+}
+
+const autoFallbackToggle = $('#autoFallbackToggle');
+if (autoFallbackToggle) {
+  autoFallbackToggle.addEventListener('change', async () => {
+    try {
+      await fetch('/api/bypass-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ autoFallback: autoFallbackToggle.checked })
+      });
+      toast('info', 'Auto-Fallback', autoFallbackToggle.checked ? 'Rotasi profil client otomatis aktif.' : 'Auto-fallback nonaktif.');
+    } catch (e) {}
+  });
+}
+
+const smartDelayToggle = $('#smartDelayToggle');
+if (smartDelayToggle) {
+  smartDelayToggle.addEventListener('change', async () => {
+    try {
+      await fetch('/api/bypass-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ smartDelay: smartDelayToggle.checked })
+      });
+      toast('info', 'Smart Delay', smartDelayToggle.checked ? 'Jeda alami manusia aktif untuk unduhan playlist.' : 'Smart delay nonaktif.');
+    } catch (e) {}
+  });
+}
+
+// Turbo toggle listener
+const turboToggle=$('#turboToggle');
+const turboBadge=$('#turboBadge');
+turboToggle.addEventListener('change',async()=>{
+  const isTurbo=turboToggle.checked;
+  turboBadge.textContent=isTurbo?'Aktif ⚡':'Nonaktif';
+  turboBadge.style.background=isTurbo?'var(--gradient-green)':'rgba(255,255,255,0.2)';
+  try{
+    await fetch('/api/bypass-config',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({turboMode:isTurbo,concurrentFragments:isTurbo?8:1})
+    });
+    toast(isTurbo?'success':'info',isTurbo?'Mode Turbo Aktif':'Mode Standar',isTurbo?'Akselerasi 8-thread download paralel aktif.':'Menggunakan 1 thread download standar.');
+  }catch(err){
+    console.error(err);
+  }
+});
+
+async function setBypassProfile(clientId){
+  try{
+    const res=await fetch('/api/bypass-config',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({client:clientId})
+    });
+    const data=await res.json();
+    if(res.ok){
+      toast('success','Profil Diubah',`Profil bypass berhasil diganti ke: ${clientId}`);
+      await loadSystemStatus();
+    }else{
+      toast('error','Gagal Mengubah Profil',data.error);
+    }
+  }catch(err){
+    toast('error','Error',err.message);
+  }
+}
+
+// 1-Click Engine Update
+updateEngineBtn.addEventListener('click',async()=>{
+  if(updateEngineBtn.disabled)return;
+  updateEngineBtn.disabled=true;
+  updateBtnText.innerHTML='<span class="spinner" style="width:14px;height:14px"></span> Memperbarui Engine...';
+  updateLog.style.display='block';
+  updateLog.textContent='Menghubungi repositori rilis resmi dan memperbarui paket yt-dlp...\n';
+
+  try{
+    const res=await fetch('/api/update-engine',{method:'POST'});
+    const data=await res.json();
+
+    if(res.ok){
+      updateLog.textContent+=`Selesai!\nVersi lama: ${data.oldVersion}\nVersi baru: ${data.newVersion}\n\nLog:\n${data.output}`;
+      toast('success','Update Berhasil',data.message);
+      await loadSystemStatus();
+    }else{
+      updateLog.textContent+=`Gagal: ${data.error}\n${data.details||''}`;
+      toast('error','Update Gagal',data.error);
+    }
+  }catch(err){
+    updateLog.textContent+=`Error koneksi: ${err.message}`;
+    toast('error','Error Update',err.message);
+  }finally{
+    updateEngineBtn.disabled=false;
+    updateBtnText.textContent='Perbarui Engine yt-dlp Sekarang (1-Klik)';
+  }
+});
+
+// Diagnostic Test
+testBypassBtn.addEventListener('click',async()=>{
+  if(testBypassBtn.disabled)return;
+  testBypassBtn.disabled=true;
+  testBypassBtn.innerHTML='<span class="spinner" style="width:12px;height:12px"></span> Menguji...';
+  testResult.style.display='none';
+
+  try{
+    const res=await fetch('/api/test-bypass');
+    const data=await res.json();
+
+    testResult.style.display='block';
+    if(res.ok){
+      testResult.className='test-result success';
+      testResult.innerHTML=`<i class="fas fa-check-circle"></i> <strong>Bypass Berhasil!</strong> (${data.latency})<br>${data.message}`;
+      toast('success','Tes Berhasil',`Koneksi lancar dalam ${data.latency}`);
+    }else{
+      testResult.className='test-result failed';
+      testResult.innerHTML=`<i class="fas fa-times-circle"></i> <strong>Bypass Gagal:</strong><br>${data.error}<br><small style="margin-top:4px;display:block">${data.suggestion}</small>`;
+      toast('warning','Hasil Tes',data.error);
+    }
+  }catch(err){
+    testResult.style.display='block';
+    testResult.className='test-result failed';
+    testResult.textContent='Error saat pengujian: '+err.message;
+  }finally{
+    testBypassBtn.disabled=false;
+    testBypassBtn.innerHTML='<i class="fas fa-play"></i> Uji Sekarang';
+  }
+});
+
+// Modal toggle
+function openModal(){settingsModal.classList.add('active');loadSystemStatus();}
+function closeModal(){settingsModal.classList.remove('active');}
+
+openSettingsBtn.addEventListener('click',openModal);
+badgeBypassTrigger.addEventListener('click',openModal);
+closeSettingsBtn.addEventListener('click',closeModal);
+settingsModal.addEventListener('click',e=>{if(e.target===settingsModal)closeModal()});
+
+// ========== HISTORY ==========
+function addToHistory(item){
+  item.date=new Date().toISOString();
+  if (!item.title || item.title === 'Single Video' || item.title === 'Untitled') {
+    if (item.filename) {
+      item.title = item.filename.replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+    }
+  }
+  history.unshift(item);
+  if(history.length>50)history.pop();
+  localStorage.setItem('yt_dl_history',JSON.stringify(history));
+  renderHistory();
+}
+
+async function syncHistoryFromDB(){
+  try{
+    const res = await fetch('/api/history');
+    if(res.ok){
+      const dbHistory = await res.json();
+      if(Array.isArray(dbHistory) && dbHistory.length > 0){
+        history = dbHistory.map(item => {
+          if (!item.title || item.title === 'Single Video' || item.title === 'Untitled') {
+            if (item.filename) {
+              item.title = item.filename.replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+            }
+          }
+          return item;
+        });
+        localStorage.setItem('yt_dl_history', JSON.stringify(history));
+        renderHistory();
+      }
+    }
+  }catch(e){
+    console.error('History sync error', e);
+  }
+}
+
+async function promptRenameHistory(jobId, currentTitle) {
+  const newTitle = prompt('Sesuaikan nama judul file untuk riwayat unduhan ini:', currentTitle);
+  if (!newTitle || newTitle.trim() === '' || newTitle.trim() === currentTitle) return;
+  const clean = newTitle.trim();
+  try {
+    const res = await fetch('/api/history/rename', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobId, title: clean })
+    });
+    if (res.ok) {
+      const item = history.find(h => (h.jobId === jobId || h.id === jobId));
+      if (item) item.title = clean;
+      localStorage.setItem('yt_dl_history', JSON.stringify(history));
+      renderHistory();
+      toast('success', 'Nama Diperbarui', `Judul disesuaikan menjadi: "${clean}"`);
+    } else {
+      toast('warning', 'Gagal', 'Tidak dapat mengubah judul di server');
+    }
+  } catch (e) {
+    toast('error', 'Error', e.message);
+  }
+}
+
+const clearHistoryBtn = $('#clearHistoryBtn');
+if (clearHistoryBtn) {
+  clearHistoryBtn.addEventListener('click', async () => {
+    history = [];
+    localStorage.removeItem('yt_dl_history');
+    renderHistory();
+    try {
+      await fetch('/api/clear-history', { method: 'POST' });
+    } catch (e) {}
+    toast('info', 'Riwayat Dihapus', 'Semua riwayat unduhan di database telah dibersihkan');
+  });
+}
+
+function renderHistory(){
+  const list=$('#historyList');
+  if(history.length===0){
+    list.innerHTML='<div class="history-empty"><i class="fas fa-inbox"></i><p>Belum ada riwayat unduhan</p></div>';
+    return;
+  }
+  list.innerHTML=history.map(h=>{
+    const dlLink = h.isBatch 
+      ? `/api/download-zip/${h.jobId || h.id}` 
+      : `/api/download/${h.jobId || h.id}/${encodeURIComponent(h.filename||'')}`;
+    const badgeLabel = h.isBatch ? 'Paket .ZIP' : ((h.format || 'MP3') + ' ' + (h.quality||''));
+
+    let displayTitle = h.title;
+    if (!displayTitle || displayTitle === 'Single Video' || displayTitle === 'Untitled') {
+      if (h.filename) {
+        displayTitle = h.filename.replace(/\.[^.]+$/, '').replace(/_/g, ' ');
+      } else {
+        displayTitle = 'Video YouTube';
+      }
+    }
+
+    return `
+      <div class="bf-item">
+        <i class="bf-icon fas fa-${h.format==='MP3'||h.format==='mp3'?'music':h.isBatch?'file-archive':'video'}"></i>
+        <div style="flex:1;min-width:0;cursor:pointer" onclick="window.open('${dlLink}','_blank')">
+          <div class="bf-name" title="${escapeHtml(displayTitle)}">${escapeHtml(displayTitle)}</div>
+          <div style="font-size:0.7rem;color:var(--text-muted)">${h.isBatch ? 'Paket unduhan batch' : (h.size||'')}</div>
+        </div>
+        <span class="bf-size">${badgeLabel}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${!h.isBatch && h.filename ? `<button class="bf-play" type="button" onclick="event.stopPropagation();openMediaPlayer('${h.jobId || h.id}', '${escapeHtml(h.filename)}', '${escapeHtml(displayTitle)}', '${h.format||'MP3'}')" title="Putar langsung"><i class="fas fa-play"></i></button>` : ''}
+          <button class="bf-play" type="button" style="background:#4b5563;color:#fff" onclick="event.stopPropagation();promptRenameHistory('${h.jobId || h.id}', '${escapeHtml(displayTitle)}')" title="Sesuaikan / Ubah Judul File"><i class="fas fa-edit"></i></button>
+          <button class="bf-play" type="button" style="background:#059669;color:#fff" onclick="event.stopPropagation();openQrModal('${h.jobId || h.id}', '${escapeHtml(h.filename||'')}')" title="Share ke Smartphone via QR Code"><i class="fas fa-qrcode"></i></button>
+          <a class="bf-dl" href="${dlLink}" download title="Unduh"><i class="fas fa-download"></i></a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+// ========== IN-BROWSER MEDIA PLAYER ==========
+function openMediaPlayer(jobId, filename, title, format) {
+  if (!jobId || !filename) {
+    toast('warning', 'Tidak Dapat Memutar', 'File belum tersedia untuk diputar');
+    return;
+  }
+  const streamUrl = `/api/stream/${jobId}/${encodeURIComponent(filename)}`;
+  const isVideo = (format && format.toLowerCase().includes('mp4')) || filename.toLowerCase().endsWith('.mp4');
+  
+  const drawer = $('#mediaPlayerDrawer');
+  const audioEl = $('#webAudioPlayer');
+  const videoEl = $('#webVideoPlayer');
+  const videoCont = $('#videoContainer');
+  
+  $('#playerTitle').textContent = title || filename;
+  $('#playerSub').textContent = isVideo ? 'Video MP4 Stream' : 'Audio MP3 Stream';
+  $('#playerThumbIcon').innerHTML = isVideo ? '<i class="fas fa-video"></i>' : '<i class="fas fa-music"></i>';
+
+  drawer.style.display = 'block';
+
+  if (isVideo) {
+    audioEl.pause();
+    audioEl.style.display = 'none';
+    videoCont.style.display = 'block';
+    videoEl.src = streamUrl;
+    videoEl.play().catch(() => {});
+  } else {
+    videoEl.pause();
+    videoCont.style.display = 'none';
+    audioEl.style.display = 'block';
+    audioEl.src = streamUrl;
+    audioEl.play().catch(() => {});
+  }
+
+  toast('info', 'Memutar Media', `Memutar "${title || filename}"`);
+}
+
+const closePlayerBtn = $('#closePlayerBtn');
+if (closePlayerBtn) {
+  closePlayerBtn.addEventListener('click', () => {
+    $('#webAudioPlayer').pause();
+    $('#webVideoPlayer').pause();
+    $('#mediaPlayerDrawer').style.display = 'none';
+  });
+}
+
+// ========== OPEN DOWNLOADS FOLDER ==========
+async function openFolder(jobId) {
+  try {
+    const res = await fetch('/api/open-folder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jobId })
+    });
+    if (res.ok) {
+      toast('success', 'Folder Terbuka', 'Windows File Explorer telah dibuka.');
+    } else {
+      toast('warning', 'Info', 'Tidak dapat membuka folder secara otomatis');
+    }
+  } catch (e) {
+    toast('error', 'Error', e.message);
+  }
+}
+
+// ========== PLAYLIST SELECTION LOGIC ==========
+function updatePlaylistSelection() {
+  const allCbs = document.querySelectorAll('.pv-checkbox');
+  const checkedCbs = document.querySelectorAll('.pv-checkbox:checked');
+  const count = checkedCbs.length;
+  const total = allCbs.length;
+
+  const countEl = $('#pvSelectedCount');
+  if (countEl) countEl.textContent = `Terpilih: ${count} dari ${total} video`;
+
+  if (convertBtnText && currentInfo && currentInfo.type === 'playlist') {
+    convertBtnText.textContent = count > 0 
+      ? `Convert ${count} Video Terpilih` 
+      : 'Pilih Minimal 1 Video';
+    convertBtn.disabled = count === 0;
+  }
+}
+
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.classList.contains('pv-checkbox')) {
+    updatePlaylistSelection();
+  }
+});
+
+const btnSelectAll = $('#btnSelectAll');
+const btnDeselectAll = $('#btnDeselectAll');
+if (btnSelectAll) {
+  btnSelectAll.addEventListener('click', () => {
+    document.querySelectorAll('.pv-checkbox').forEach(cb => cb.checked = true);
+    updatePlaylistSelection();
+  });
+}
+if (btnDeselectAll) {
+  btnDeselectAll.addEventListener('click', () => {
+    document.querySelectorAll('.pv-checkbox').forEach(cb => cb.checked = false);
+    updatePlaylistSelection();
+  });
+}
+
+// ========== TRIM TOOL CONTROLS ==========
+const trimToggleHeader = $('#trimToggleHeader');
+const trimBody = $('#trimBody');
+const trimStatusBadge = $('#trimStatusBadge');
+const trimStart = $('#trimStart');
+const trimEnd = $('#trimEnd');
+const btnClearTrim = $('#btnClearTrim');
+
+if (trimToggleHeader && trimBody) {
+  trimToggleHeader.addEventListener('click', () => {
+    const isHidden = trimBody.style.display === 'none';
+    trimBody.style.display = isHidden ? 'block' : 'none';
+  });
+}
+
+function updateTrimBadge() {
+  const hasVal = (trimStart && trimStart.value.trim()) || (trimEnd && trimEnd.value.trim());
+  if (trimStatusBadge) {
+    trimStatusBadge.textContent = hasVal ? 'Aktif ✂️' : 'Nonaktif';
+    trimStatusBadge.style.background = hasVal ? 'var(--gradient-green)' : 'rgba(255,255,255,0.08)';
+    trimStatusBadge.style.color = hasVal ? '#fff' : 'var(--text-muted)';
+  }
+}
+
+if (trimStart) trimStart.addEventListener('input', updateTrimBadge);
+if (trimEnd) trimEnd.addEventListener('input', updateTrimBadge);
+if (btnClearTrim) {
+  btnClearTrim.addEventListener('click', () => {
+    if (trimStart) trimStart.value = '';
+    if (trimEnd) trimEnd.value = '';
+    updateTrimBadge();
+  });
+}
+
+// ========== EVENTS ==========
+fetchBtn.addEventListener('click',fetchInfo);
+urlInput.addEventListener('keydown',e=>{if(e.key==='Enter')fetchInfo()});
+urlInput.addEventListener('input',()=>{
+  clearBtn.classList.toggle('visible',urlInput.value.length>0);
+  urlInput.classList.remove('valid','invalid');
+});
+clearBtn.addEventListener('click',resetUI);
+pasteBtn.addEventListener('click', async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text && text.trim()) {
+      urlInput.value = text.trim();
+      clearBtn.classList.add('visible');
+      toast('success', 'Link Ditempel!', 'Link berhasil dibaca dari clipboard. Memulai analisis...');
+      fetchInfo();
+    } else {
+      toast('warning', 'Clipboard Kosong', 'Tidak ada teks/URL pada clipboard Anda');
+    }
+  } catch (err) {
+    toast('warning', 'Gagal Membaca Clipboard', 'Gunakan Ctrl+V untuk menempel langsung');
+  }
+});
+convertBtn.addEventListener('click',convert);
+$('#newBtn').addEventListener('click',resetUI);
+$('#newBatchBtn').addEventListener('click',resetUI);
+// Prevent accidental page close or reload during active download
+window.addEventListener('beforeunload', (e) => {
+  if (isProcessing) {
+    e.preventDefault();
+    e.returnValue = 'Unduhan sedang berjalan. Jangan tutup atau refresh halaman agar proses tidak terganggu.';
+    return e.returnValue;
+  }
+});
+
+// Resume active job if page was reloaded or connection was restored
+async function resumeActiveJobIfAny() {
+  const savedStr = localStorage.getItem('yt_active_job');
+  if (!savedStr) return;
+  try {
+    const saved = JSON.parse(savedStr);
+    if (!saved || !saved.jobId) return;
+
+    const res = await fetch(`/api/progress/${saved.jobId}`);
+    if (!res.ok) {
+      localStorage.removeItem('yt_active_job');
+      return;
+    }
+    const data = await res.json();
+    if (data.status === 'downloading') {
+      isProcessing = true;
+      currentInfo = { url: saved.url, title: saved.title, type: 'playlist', count: saved.count };
+      hideAll();
+      showSections(videoInfoSection, progressSection);
+      $('#vTitle').textContent = saved.title || 'Playlist Download';
+      progressBar.classList.remove('indeterminate');
+      progressBar.style.width = Math.min(data.progress || 0, 100) + '%';
+      progressStatus.textContent = data.total ? `Melanjutkan unduhan ${data.completed || 0}/${data.total} video...` : 'Melanjutkan proses unduhan stream...';
+      progressPercent.textContent = Math.round(data.progress || 0) + '%';
+      toast('info', 'Melanjutkan Unduhan', 'Tersambung kembali ke proses download yang sedang berjalan...');
+      await pollBatchProgress(saved.jobId);
+    } else if (data.status === 'completed') {
+      const fRes = await fetch(`/api/batch-files/${saved.jobId}`);
+      if (fRes.ok) {
+        const fData = await fRes.json();
+        if (fData.files && fData.files.length > 0) {
+          renderBatchCompleted(saved.jobId, fData.files);
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Error resuming job', e);
+  }
+}
+
+// ========== MODE SWITCHER (URL, SEARCH, BATCH, WINAMP) ==========
+const tabUrl = $('#tabUrl');
+const tabSearch = $('#tabSearch');
+const tabBatch = $('#tabBatch');
+const tabWinamp = $('#tabWinamp');
+const urlModeContainer = $('#urlModeContainer');
+const searchModeContainer = $('#searchModeContainer');
+const batchModeContainer = $('#batchModeContainer');
+const winampModeContainer = $('#winampModeContainer');
+
+function switchMode(mode) {
+  const mainContainer = $('.container');
+  if (mainContainer) {
+    mainContainer.classList.toggle('winamp-expanded', mode === 'winamp');
+  }
+
+  if (tabUrl) tabUrl.classList.remove('active');
+  if (tabSearch) tabSearch.classList.remove('active');
+  if (tabBatch) tabBatch.classList.remove('active');
+  if (tabWinamp) tabWinamp.classList.remove('active');
+
+  if (urlModeContainer) urlModeContainer.style.display = 'none';
+  if (searchModeContainer) searchModeContainer.style.display = 'none';
+  if (batchModeContainer) batchModeContainer.style.display = 'none';
+  if (winampModeContainer) winampModeContainer.style.display = 'none';
+
+  if (mode === 'url') {
+    if (tabUrl) tabUrl.classList.add('active');
+    if (urlModeContainer) urlModeContainer.style.display = 'block';
+  } else if (mode === 'search') {
+    if (tabSearch) tabSearch.classList.add('active');
+    if (searchModeContainer) searchModeContainer.style.display = 'block';
+    const sInput = $('#searchInput');
+    if (sInput) sInput.focus();
+  } else if (mode === 'batch') {
+    if (tabBatch) tabBatch.classList.add('active');
+    if (batchModeContainer) batchModeContainer.style.display = 'block';
+    const bInput = $('#batchUrlsInput');
+    if (bInput) bInput.focus();
+  } else if (mode === 'winamp') {
+    if (tabWinamp) tabWinamp.classList.add('active');
+    if (winampModeContainer) winampModeContainer.style.display = 'block';
+    const wInput = $('#winampSearchInput');
+    if (wInput) wInput.focus();
+    startWinampVisualizer();
+  }
+}
+
+if (tabUrl) tabUrl.addEventListener('click', () => switchMode('url'));
+if (tabSearch) tabSearch.addEventListener('click', () => switchMode('search'));
+if (tabBatch) tabBatch.addEventListener('click', () => switchMode('batch'));
+if (tabWinamp) tabWinamp.addEventListener('click', () => switchMode('winamp'));
+
+// ========== IN-APP YOUTUBE SEARCH ==========
+const searchInput = $('#searchInput');
+const searchBtn = $('#searchBtn');
+const clearSearchBtn = $('#clearSearchBtn');
+const searchLoading = $('#searchLoading');
+const searchResultsGrid = $('#searchResultsGrid');
+
+async function performSearch() {
+  if (!searchInput) return;
+  const query = searchInput.value.trim();
+  if (!query) {
+    toast('warning', 'Perhatian', 'Ketik kata kunci pencarian lagu atau video');
+    return;
+  }
+  if (searchLoading) searchLoading.style.display = 'block';
+  if (searchResultsGrid) {
+    searchResultsGrid.style.display = 'none';
+    searchResultsGrid.innerHTML = '';
+  }
+  if (searchBtn) searchBtn.disabled = true;
+
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal mencari video');
+
+    if (!data.results || data.results.length === 0) {
+      searchResultsGrid.innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted)">Tidak ada hasil video ditemukan. Coba kata kunci lain.</div>';
+    } else {
+      searchResultsGrid.innerHTML = data.results.map(r => `
+        <div class="search-card">
+          <div class="search-thumb-wrap">
+            <img src="${escapeHtml(r.thumbnail)}" alt="" loading="lazy" />
+            <span class="search-thumb-dur">${r.durationFormatted}</span>
+          </div>
+          <div class="search-info">
+            <div class="search-title" title="${escapeHtml(r.title)}">${escapeHtml(r.title)}</div>
+            <div class="search-meta">
+              <span><i class="fas fa-user"></i> ${escapeHtml(r.channel)}</span>
+              ${r.views ? `<span><i class="fas fa-eye"></i> ${r.views}</span>` : ''}
+            </div>
+          </div>
+          <div class="search-actions">
+            <button class="btn-quick-dl btn-quick-mp3" type="button" onclick="quickDownloadDirect('${escapeHtml(r.url)}', 'mp3', '${escapeHtml(r.title)}')">
+              <i class="fas fa-music"></i> MP3
+            </button>
+            <button class="btn-quick-dl btn-quick-mp4" type="button" onclick="quickDownloadDirect('${escapeHtml(r.url)}', 'mp4', '${escapeHtml(r.title)}')">
+              <i class="fas fa-video"></i> Video
+            </button>
+            <button class="btn-quick-dl" type="button" style="background:rgba(255,255,255,0.06);color:var(--text-secondary)" onclick="selectSearchResult('${escapeHtml(r.url)}')">
+              <i class="fas fa-sliders-h"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+    if (searchResultsGrid) searchResultsGrid.style.display = 'grid';
+  } catch (err) {
+    toast('error', 'Pencarian Gagal', err.message);
+  } finally {
+    if (searchLoading) searchLoading.style.display = 'none';
+    if (searchBtn) searchBtn.disabled = false;
+  }
+}
+
+if (searchBtn) searchBtn.addEventListener('click', performSearch);
+if (searchInput) {
+  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') performSearch(); });
+}
+if (clearSearchBtn) {
+  clearSearchBtn.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    if (searchResultsGrid) searchResultsGrid.style.display = 'none';
+  });
+}
+
+function selectSearchResult(url) {
+  switchMode('url');
+  urlInput.value = url;
+  clearBtn.classList.add('visible');
+  fetchInfo();
+}
+
+async function quickDownloadDirect(url, format, title) {
+  switchMode('url');
+  urlInput.value = url;
+  clearBtn.classList.add('visible');
+  const fmtRadio = document.querySelector(`input[name="format"][value="${format}"]`);
+  if (fmtRadio) {
+    fmtRadio.checked = true;
+    renderQualityCards();
+  }
+  toast('info', 'Memulai Unduh', `Menyiapkan download ${format.toUpperCase()} untuk "${title}"...`);
+  await fetchInfo();
+  if (currentInfo) {
+    convert();
+  }
+}
+
+// ========== BATCH MULTI-LINK QUEUE ==========
+const batchUrlsInput = $('#batchUrlsInput');
+const startBatchQueueBtn = $('#startBatchQueueBtn');
+const batchFormatSelect = $('#batchFormatSelect');
+const batchQueueContainer = $('#batchQueueContainer');
+const batchQueueList = $('#batchQueueList');
+const batchQueueStats = $('#batchQueueStats');
+
+let batchQueue = [];
+let isQueueRunning = false;
+
+if (startBatchQueueBtn) {
+  startBatchQueueBtn.addEventListener('click', async () => {
+    if (isQueueRunning) return;
+    const rawUrls = (batchUrlsInput?.value || '').split('\n').map(u => u.trim()).filter(Boolean);
+    if (rawUrls.length === 0) {
+      toast('warning', 'Perhatian', 'Masukkan minimal 1 link video pada textarea');
+      return;
+    }
+
+    const format = batchFormatSelect ? batchFormatSelect.value : 'mp3';
+    const quality = format === 'mp3' ? '320' : '1080';
+    const loudnorm = $('#loudnormToggle')?.checked || false;
+    const subtitles = $('#subtitleToggle')?.checked || false;
+
+    batchQueue = rawUrls.map((url, i) => ({
+      id: i + 1,
+      url,
+      title: `Link #${i + 1} (${url.substring(0, 30)}...)`,
+      format,
+      quality,
+      status: 'pending',
+      progress: 0,
+      downloadUrl: null,
+      filename: null
+    }));
+
+    if (batchQueueContainer) batchQueueContainer.style.display = 'block';
+    renderBatchQueue();
+    processBatchQueue(loudnorm, subtitles);
+  });
+}
+
+function renderBatchQueue() {
+  const completed = batchQueue.filter(q => q.status === 'completed').length;
+  const total = batchQueue.length;
+  if (batchQueueStats) batchQueueStats.textContent = `${completed}/${total} Selesai`;
+
+  if (batchQueueList) {
+    batchQueueList.innerHTML = batchQueue.map(item => `
+      <div class="queue-item">
+        <i class="fas fa-${item.status==='completed'?'check-circle':item.status==='running'?'spinner fa-spin':item.status==='error'?'exclamation-circle':'clock'}" style="color:${item.status==='completed'?'var(--success)':item.status==='running'?'var(--info)':item.status==='error'?'var(--error)':'var(--text-muted)'}"></i>
+        <div class="queue-title">${escapeHtml(item.title)}</div>
+        <span class="queue-status-badge badge-${item.status}">
+          ${item.status === 'pending' ? 'Antrian' : item.status === 'running' ? 'Mengunduh...' : item.status === 'completed' ? 'Selesai' : 'Gagal'}
+        </span>
+        ${item.downloadUrl ? `<a href="${item.downloadUrl}" download class="bf-dl" title="Unduh File"><i class="fas fa-download"></i></a>` : ''}
+      </div>
+    `).join('');
+  }
+}
+
+async function processBatchQueue(loudnorm, subtitles) {
+  isQueueRunning = true;
+  if (startBatchQueueBtn) {
+    startBatchQueueBtn.disabled = true;
+    startBatchQueueBtn.innerHTML = '<span class="spinner" style="width:14px;height:14px"></span> Sedang Memproses Batch...';
+  }
+
+  for (let i = 0; i < batchQueue.length; i++) {
+    const item = batchQueue[i];
+    item.status = 'running';
+    renderBatchQueue();
+
+    try {
+      const res = await fetch('/api/convert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          url: item.url,
+          title: item.title,
+          format: item.format,
+          quality: item.quality,
+          loudnorm,
+          subtitles
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal download');
+
+      item.status = 'completed';
+      item.progress = 100;
+      item.title = data.title || item.title;
+      item.filename = data.filename;
+      item.downloadUrl = `/api/download/${data.jobId}/${encodeURIComponent(data.filename)}`;
+
+      addToHistory({
+        title: data.title,
+        format: data.format,
+        quality: data.quality,
+        size: data.size,
+        jobId: data.jobId,
+        filename: data.filename
+      });
+    } catch (err) {
+      item.status = 'error';
+      item.title = `${item.title} — ${err.message}`;
+    }
+    renderBatchQueue();
+  }
+
+  isQueueRunning = false;
+  if (startBatchQueueBtn) {
+    startBatchQueueBtn.disabled = false;
+    startBatchQueueBtn.innerHTML = '<i class="fas fa-play"></i> Mulai Unduh Semua (Batch Queue)';
+  }
+  toast('success', 'Batch Selesai', 'Semua antrian link telah selesai diproses!');
+}
+
+// ========== QR CODE SHARE MODAL ==========
+const qrModal = $('#qrModal');
+const closeQrModalBtn = $('#closeQrModalBtn');
+const qrImage = $('#qrImage');
+const qrFileName = $('#qrFileName');
+const qrUrlInput = $('#qrUrlInput');
+const qrCopyBtn = $('#qrCopyBtn');
+
+async function openQrModal(jobId, filename) {
+  if (!jobId) {
+    toast('warning', 'Perhatian', 'ID file tidak valid');
+    return;
+  }
+  try {
+    toast('info', 'QR Code', 'Menyiapkan QR Code transfer smartphone...');
+    const params = new URLSearchParams({ jobId });
+    if (filename) params.append('filename', filename);
+    const res = await fetch(`/api/qr-share?${params.toString()}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal membuat QR Code');
+
+    if (qrImage) qrImage.src = data.qrDataUrl;
+    if (qrFileName) qrFileName.textContent = filename || 'Paket Unduhan (.ZIP)';
+    if (qrUrlInput) qrUrlInput.value = data.targetUrl;
+    if (qrModal) qrModal.classList.add('active');
+  } catch (err) {
+    toast('error', 'QR Error', err.message);
+  }
+}
+
+function closeQrModal() {
+  if (qrModal) qrModal.classList.remove('active');
+}
+
+if (closeQrModalBtn) closeQrModalBtn.addEventListener('click', closeQrModal);
+if (qrModal) {
+  qrModal.addEventListener('click', e => {
+    if (e.target === qrModal) closeQrModal();
+  });
+}
+
+if (qrCopyBtn) {
+  qrCopyBtn.addEventListener('click', () => {
+    if (qrUrlInput && qrUrlInput.value) {
+      navigator.clipboard.writeText(qrUrlInput.value);
+      toast('success', 'Tersalin', 'Link download lokal disalin ke clipboard');
+    }
+  });
+}
+
+const qrSingleBtn = $('#qrSingleBtn');
+if (qrSingleBtn) {
+  qrSingleBtn.addEventListener('click', () => {
+    if (lastCompletedJobId) {
+      openQrModal(lastCompletedJobId, lastCompletedFilename);
+    } else {
+      toast('warning', 'Perhatian', 'Belum ada file yang siap dishare');
+    }
+  });
+}
+
+const qrBatchBtn = $('#qrBatchBtn');
+if (qrBatchBtn) {
+  qrBatchBtn.addEventListener('click', () => {
+    const raw = localStorage.getItem('yt_active_job');
+    let jId = lastCompletedJobId;
+    if (raw) {
+      try { jId = JSON.parse(raw).jobId; } catch {}
+    }
+    if (jId) {
+      openQrModal(jId, null);
+    } else {
+      toast('warning', 'Perhatian', 'Belum ada paket unduhan');
+    }
+  });
+}
+
+// ========== WINAMP LIVE PLAYER ENGINE (ZERO DISK / AUDIO-ONLY STREAMING) ==========
+let winampAudio = new Audio();
+winampAudio.crossOrigin = 'anonymous';
+
+let winampPlaylist = [];
+let winampCurrentIndex = -1;
+let isWinampPlaying = false;
+let winampVisRunning = false;
+let isWinampShuffle = false;
+let isWinampRepeat = false;
+let isHqAudioEnabled = true;
+let isKaraokeMode = false;  // Real-time vocal removal (karaoke) mode
+let peakBars = new Array(16).fill(0);
+let currentBars = new Array(16).fill(0);
+
+// =========================================================================
+//  WEB AUDIO API CRYSTAL-CLEAR VOCAL ELIMINATOR DSP ENGINE (ANTI-MENDEM)
+// =========================================================================
+// 1. Zero stream restart: audio continues seamlessly without interruption.
+// 2. 200ms silky-smooth linear crossfade: no clicks, pops, or abrupt jumps.
+// 3. 3-Way Crossover Architecture (Bass / Vocal Mids / Treble Sparkle):
+//    - Low Band (< 220 Hz): Original Clean Stereo Bass & Kick (Punchy, Thick)
+//    - High Band (> 3600 Hz): Original Clean Stereo Treble & Cymbals (Bright, Open)
+//    - Mid Band (220 Hz - 3600 Hz): In-phase center vocal subtraction (L_mid - R_mid)
+// 4. In-Phase Polarity: Both Left and Right output in the same phase,
+//    eliminating hollow out-of-phase acoustic cancellation ("suara mendem").
+// 5. Studio Brilliance Exciter: High-shelf boost (+3.0 dB @ 5 kHz) so the
+//    instrumental stays sparkling, crisp, vibrant, and alive!
+// =========================================================================
+let webAudioCtx = null;
+let webAudioSource = null;
+let dryGainNode = null;
+let wetGainNode = null;
+let isWebAudioReady = false;
+
+function initWebAudioGraph() {
+  if (isWebAudioReady) return;
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    webAudioCtx = new AudioContextClass();
+    webAudioSource = webAudioCtx.createMediaElementSource(winampAudio);
+
+    // 1. Dry Path (Normal Audio with Vocal)
+    dryGainNode = webAudioCtx.createGain();
+    dryGainNode.gain.value = isKaraokeMode ? 0.0 : 1.0;
+    webAudioSource.connect(dryGainNode);
+    dryGainNode.connect(webAudioCtx.destination);
+
+    // 2. Wet Path: 3-Way Crossover Crystal-Clear Instrumental Engine
+    const splitter = webAudioCtx.createChannelSplitter(2);
+    webAudioSource.connect(splitter);
+
+    // --- BAND 1: CLEAN STEREO BASS & KICK (< 220 Hz) ---
+    // Pure original stereo bassline, no phase cancellation, solid & punchy
+    const bassL = webAudioCtx.createBiquadFilter();
+    bassL.type = 'lowpass';
+    bassL.frequency.value = 220;
+    bassL.Q.value = 0.707;
+    splitter.connect(bassL, 0);
+
+    const bassR = webAudioCtx.createBiquadFilter();
+    bassR.type = 'lowpass';
+    bassR.frequency.value = 220;
+    bassR.Q.value = 0.707;
+    splitter.connect(bassR, 1);
+
+    // --- BAND 2: CLEAN STEREO TREBLE & CYMBALS (> 3600 Hz) ---
+    // Pure original stereo high frequencies: cymbals, hi-hats, acoustic air, reverb
+    // Guarantees audio is NEVER muffled ("tidak mendem")!
+    const trebleL = webAudioCtx.createBiquadFilter();
+    trebleL.type = 'highpass';
+    trebleL.frequency.value = 3600;
+    trebleL.Q.value = 0.707;
+    splitter.connect(trebleL, 0);
+
+    const trebleR = webAudioCtx.createBiquadFilter();
+    trebleR.type = 'highpass';
+    trebleR.frequency.value = 3600;
+    trebleR.Q.value = 0.707;
+    splitter.connect(trebleR, 1);
+
+    // --- BAND 3: VOCAL MID BAND (220 Hz - 3600 Hz) ---
+    // Only in this mid-frequency range is the center vocal cancelled!
+    const midHpL = webAudioCtx.createBiquadFilter();
+    midHpL.type = 'highpass';
+    midHpL.frequency.value = 220;
+    splitter.connect(midHpL, 0);
+    const midLpL = webAudioCtx.createBiquadFilter();
+    midLpL.type = 'lowpass';
+    midLpL.frequency.value = 3600;
+    midHpL.connect(midLpL);
+
+    const midHpR = webAudioCtx.createBiquadFilter();
+    midHpR.type = 'highpass';
+    midHpR.frequency.value = 220;
+    splitter.connect(midHpR, 1);
+    const midLpR = webAudioCtx.createBiquadFilter();
+    midLpR.type = 'lowpass';
+    midLpR.frequency.value = 3600;
+    midHpR.connect(midLpR);
+
+    // Center Vocal Cancellation: L_mid - R_mid
+    // Lead vocals (which are equal in L and R) completely subtract to zero!
+    const vocalCancelNode = webAudioCtx.createGain();
+    const posL = webAudioCtx.createGain(); posL.gain.value = 1.0;
+    const invR = webAudioCtx.createGain(); invR.gain.value = -1.0;
+    midLpL.connect(posL);
+    midLpR.connect(invR);
+    posL.connect(vocalCancelNode);
+    invR.connect(vocalCancelNode);
+
+    // --- STEREO RECONSTRUCTION (IN-PHASE / ANTI-MENDEM) ---
+    // Merge: Left gets (Bass Left + Treble Left + Vocal-Free Mid)
+    //        Right gets (Bass Right + Treble Right + Vocal-Free Mid)
+    // In-phase feed to both ears prevents acoustic hollow cancellation!
+    const merger = webAudioCtx.createChannelMerger(2);
+    bassL.connect(merger, 0, 0);     // Left Bass
+    trebleL.connect(merger, 0, 0);   // Left Highs
+    vocalCancelNode.connect(merger, 0, 0); // Vocal-Free Mids to Left
+
+    bassR.connect(merger, 0, 1);     // Right Bass
+    trebleR.connect(merger, 0, 1);   // Right Highs
+    vocalCancelNode.connect(merger, 0, 1); // Vocal-Free Mids to Right
+
+    // --- MASTER ACOUSTIC EXCITER & CLARITY SHAPER ---
+    // Adds +3dB sparkle at 5 kHz and +1.8dB presence at 1.2 kHz
+    // Ensures instrumental sounds crisp, transparent, punchy, and alive!
+    const clarityShaper = webAudioCtx.createBiquadFilter();
+    clarityShaper.type = 'highshelf';
+    clarityShaper.frequency.value = 5000;
+    clarityShaper.gain.value = 3.0;
+    merger.connect(clarityShaper);
+
+    const presenceShaper = webAudioCtx.createBiquadFilter();
+    presenceShaper.type = 'peaking';
+    presenceShaper.frequency.value = 1200;
+    presenceShaper.Q.value = 1.0;
+    presenceShaper.gain.value = 1.8;
+    clarityShaper.connect(presenceShaper);
+
+    const makeupGain = webAudioCtx.createGain();
+    makeupGain.gain.value = 1.30;
+    presenceShaper.connect(makeupGain);
+
+    // Wet Gain Node
+    wetGainNode = webAudioCtx.createGain();
+    wetGainNode.gain.value = isKaraokeMode ? 1.0 : 0.0;
+    makeupGain.connect(wetGainNode);
+    wetGainNode.connect(webAudioCtx.destination);
+
+    isWebAudioReady = true;
+    console.log('[Winamp] Web Audio Crystal-Clear Vocal Eliminator DSP Engine initialized.');
+  } catch (err) {
+    console.warn('[Winamp] Web Audio API init error:', err);
+  }
+}
+
+function setKaraokeTransition(enabled) {
+  initWebAudioGraph();
+  if (!isWebAudioReady || !webAudioCtx) return;
+
+  if (webAudioCtx.state === 'suspended') {
+    webAudioCtx.resume();
+  }
+
+  const now = webAudioCtx.currentTime;
+  const fadeDuration = 0.20; // 200ms silky-smooth acoustic crossfade
+
+  dryGainNode.gain.cancelScheduledValues(now);
+  wetGainNode.gain.cancelScheduledValues(now);
+  dryGainNode.gain.setValueAtTime(dryGainNode.gain.value, now);
+  wetGainNode.gain.setValueAtTime(wetGainNode.gain.value, now);
+
+  if (enabled) {
+    // Smooth crossfade to Karaoke (Instrumental only)
+    dryGainNode.gain.linearRampToValueAtTime(0.0, now + fadeDuration);
+    wetGainNode.gain.linearRampToValueAtTime(1.0, now + fadeDuration);
+  } else {
+    // Smooth crossfade back to Normal (Vocal returned)
+    wetGainNode.gain.linearRampToValueAtTime(0.0, now + fadeDuration);
+    dryGainNode.gain.linearRampToValueAtTime(1.0, now + fadeDuration);
+  }
+}
+
+const winampTimer = $('#winampTimer');
+const winampMarquee = $('#winampMarquee');
+const winampSeekBar = $('#winampSeekBar');
+const winampCurrentTime = $('#winampCurrentTime');
+const winampTotalTime = $('#winampTotalTime');
+const winampTrackDur = $('#winampTrackDur');
+const winampPlayBtn = $('#winampPlayBtn');
+const winampPauseBtn = $('#winampPauseBtn');
+const winampStopBtn = $('#winampStopBtn');
+const winampPrevBtn = $('#winampPrevBtn');
+const winampNextBtn = $('#winampNextBtn');
+const winampEjectBtn = $('#winampEjectBtn');
+const winampHqToggleBtn = $('#winampHqToggleBtn');
+const winampHqBadge = $('#winampHqBadge');
+const winampShuffleBtn = $('#winampShuffleBtn');
+const winampRepeatBtn = $('#winampRepeatBtn');
+const winampKaraokeBtn = $('#winampKaraokeBtn');
+const winampKaraokeBadge = $('#winampKaraokeBadge');
+const winampRadioBtn = $('#winampRadioBtn');
+const winampTasteBtn = $('#winampTasteBtn');
+const winampVolSlider = $('#winampVolSlider');
+const winampVolLabel = $('#winampVolLabel');
+const winampSearchInput = $('#winampSearchInput');
+const winampSearchBtn = $('#winampSearchBtn');
+const winampPasteBtn = $('#winampPasteBtn');
+const winampClearPlBtn = $('#winampClearPlBtn');
+const winampLoading = $('#winampLoading');
+const winampPlaylistList = $('#winampPlaylistList');
+const winampPlCount = $('#winampPlCount');
+const winampCanvas = $('#winampVisualizer');
+
+// Winamp Synchronized Karaoke Lyrics Variables
+const winampLyricsBody = $('#winampLyricsBody');
+const winampLyricsStatusBadge = $('#winampLyricsStatusBadge');
+const winampLyricsCopyBtn = $('#winampLyricsCopyBtn');
+const winampLcdKaraokeText = $('#winampLcdKaraokeText');
+const winampTabLyricsBadge = $('#winampTabLyricsBadge');
+const winampPlCountTab = $('#winampPlCountTab');
+const winampSyncValLabel = $('#winampSyncValLabel');
+const winampAutoSyncNotice = $('#winampAutoSyncNotice');
+
+let currentLyrics = [];
+let currentLyricIndex = -1;
+let rawLyricsText = '';
+let lyricsAbortController = null;
+let userLyricOffset = 0;       // Manual calibration in seconds (e.g. +0.5s or -0.2s)
+let autoDetectedOffset = 0;    // Auto-offset from YouTube intro difference
+let lyricsSyncInterval = null; // High-precision 30ms timer for microsecond vocal alignment
+let currentTrackStorageKey = '';
+
+// Volume handler
+if (winampVolSlider) {
+  winampAudio.volume = parseFloat(winampVolSlider.value) || 0.9;
+  winampVolSlider.addEventListener('input', () => {
+    winampAudio.volume = parseFloat(winampVolSlider.value);
+    if (winampVolLabel) winampVolLabel.textContent = Math.round(winampAudio.volume * 100) + '%';
+  });
+}
+
+// Time formatting helper
+function formatTimeWinamp(sec) {
+  if (!sec || isNaN(sec)) return '00:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+// Audio events
+winampAudio.addEventListener('timeupdate', () => {
+  if (!winampAudio.duration) return;
+  const cur = winampAudio.currentTime;
+  const dur = winampAudio.duration;
+  if (winampTimer) winampTimer.textContent = formatTimeWinamp(cur);
+  if (winampCurrentTime) winampCurrentTime.textContent = formatTimeWinamp(cur);
+  if (winampSeekBar && !winampSeekBar.matches(':active')) {
+    winampSeekBar.value = (cur / dur) * 100;
+  }
+  checkLyricsSyncFrame();
+});
+
+winampAudio.addEventListener('play', () => {
+  initWebAudioGraph();
+  if (webAudioCtx && webAudioCtx.state === 'suspended') {
+    webAudioCtx.resume();
+  }
+  startLyricsSyncTimer();
+});
+
+winampAudio.addEventListener('pause', () => {
+  stopLyricsSyncTimer();
+});
+
+winampAudio.addEventListener('loadedmetadata', () => {
+  const dur = winampAudio.duration;
+  if (winampTotalTime) winampTotalTime.textContent = formatTimeWinamp(dur);
+  if (winampTrackDur) winampTrackDur.textContent = formatTimeWinamp(dur);
+});
+
+winampAudio.addEventListener('ended', () => {
+  playNextWinampTrack();
+});
+
+winampAudio.addEventListener('error', (e) => {
+  console.error('Winamp stream error:', e);
+  if (winampLoading) winampLoading.style.display = 'none';
+  toast('error', 'Winamp Stream Error', 'Gagal memutar stream audio langsung dari YouTube');
+});
+
+// Seek bar input
+if (winampSeekBar) {
+  winampSeekBar.addEventListener('input', () => {
+    if (winampAudio.duration) {
+      winampAudio.currentTime = (winampSeekBar.value / 100) * winampAudio.duration;
+    }
+  });
+}
+
+// Play / Pause / Stop controls
+if (winampPlayBtn) {
+  winampPlayBtn.addEventListener('click', () => {
+    if (winampPlaylist.length === 0) {
+      toast('warning', 'Winamp Kosong', 'Cari atau tempel link lagu terlebih dahulu');
+      if (winampSearchInput) winampSearchInput.focus();
+      return;
+    }
+    initWebAudioGraph();
+    if (webAudioCtx && webAudioCtx.state === 'suspended') {
+      webAudioCtx.resume();
+    }
+    if (winampCurrentIndex === -1) {
+      playWinampTrack(0);
+    } else {
+      winampAudio.play();
+      isWinampPlaying = true;
+      startWinampVisualizer();
+    }
+  });
+}
+
+if (winampPauseBtn) {
+  winampPauseBtn.addEventListener('click', () => {
+    winampAudio.pause();
+    isWinampPlaying = false;
+  });
+}
+
+if (winampStopBtn) {
+  winampStopBtn.addEventListener('click', () => {
+    winampAudio.pause();
+    winampAudio.currentTime = 0;
+    isWinampPlaying = false;
+    if (winampTimer) winampTimer.textContent = '00:00';
+    if (winampCurrentTime) winampCurrentTime.textContent = '00:00';
+    if (winampSeekBar) winampSeekBar.value = 0;
+    currentLyricIndex = -1;
+    if (winampLcdKaraokeText) {
+      winampLcdKaraokeText.textContent = 'Pemutaran dihentikan. Tekan Play untuk memutar.';
+    }
+    if (winampLyricsBody) {
+      const lines = winampLyricsBody.querySelectorAll('.winamp-lyric-line');
+      lines.forEach(el => {
+        el.classList.remove('active');
+        el.classList.remove('past');
+      });
+      winampLyricsBody.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+}
+
+if (winampPrevBtn) {
+  winampPrevBtn.addEventListener('click', () => {
+    if (winampPlaylist.length === 0) return;
+    let nextIdx = winampCurrentIndex - 1;
+    if (nextIdx < 0) nextIdx = winampPlaylist.length - 1;
+    playWinampTrack(nextIdx);
+  });
+}
+
+if (winampNextBtn) {
+  winampNextBtn.addEventListener('click', () => {
+    playNextWinampTrack();
+  });
+}
+
+if (winampHqToggleBtn) {
+  winampHqToggleBtn.addEventListener('click', () => {
+    isHqAudioEnabled = !isHqAudioEnabled;
+    winampHqToggleBtn.classList.toggle('active', isHqAudioEnabled);
+    if (winampHqBadge) {
+      winampHqBadge.classList.toggle('lit', isHqAudioEnabled);
+      winampHqBadge.style.opacity = isHqAudioEnabled ? '1' : '0.3';
+    }
+    toast('info', 'HQ Audio Stabilizer ' + (isHqAudioEnabled ? 'Aktif' : 'Nonaktif'),
+      isHqAudioEnabled ? 'Volume lagu pelan & keras otomatis distabilkan (-14 LUFS) + vokal jernih' : 'Streaming audio mentah tanpa penstabil suara');
+    if (isWinampPlaying && winampCurrentIndex !== -1) {
+      const cur = winampAudio.currentTime || 0;
+      playWinampTrack(winampCurrentIndex, cur);
+    }
+  });
+}
+
+if (winampShuffleBtn) {
+  winampShuffleBtn.addEventListener('click', () => {
+    isWinampShuffle = !isWinampShuffle;
+    winampShuffleBtn.classList.toggle('active', isWinampShuffle);
+    toast('info', 'Shuffle ' + (isWinampShuffle ? 'Aktif' : 'Nonaktif'), isWinampShuffle ? 'Urutan pemutaran lagu diacak' : 'Pemutaran berurutan normal');
+  });
+}
+
+if (winampRepeatBtn) {
+  winampRepeatBtn.addEventListener('click', () => {
+    isWinampRepeat = !isWinampRepeat;
+    winampRepeatBtn.classList.toggle('active', isWinampRepeat);
+    toast('info', 'Repeat ' + (isWinampRepeat ? 'Aktif' : 'Nonaktif'), isWinampRepeat ? 'Lagu saat ini akan diulang terus menerus' : 'Pemutaran berganti ke lagu berikutnya');
+  });
+}
+
+// ===== KARAOKE MODE: Real-Time Vocal Removal Toggle =====
+// Seamless real-time transition via Web Audio API:
+// 1. Zero stream restart: audio continues seamlessly without interruption.
+// 2. 200ms silky-smooth linear crossfade: no clicks, pops, or abrupt jumps.
+// 3. Stereo Phase-Inversion Center-Channel Cancellation (L - R & R - L)
+// 4. Bass Preservation (< 180 Hz lowpass) keeps kick drum & bassline solid.
+// 5. Dual Surgical Notch Filters (1.5 kHz & 2.8 kHz) eliminate vocal reverb bleed.
+if (winampKaraokeBtn) {
+  winampKaraokeBtn.addEventListener('click', () => {
+    isKaraokeMode = !isKaraokeMode;
+    winampKaraokeBtn.classList.toggle('active', isKaraokeMode);
+
+    // Update LCD badge
+    if (winampKaraokeBadge) {
+      winampKaraokeBadge.style.display = isKaraokeMode ? 'inline-flex' : 'none';
+      if (isKaraokeMode) winampKaraokeBadge.classList.add('lit');
+      else winampKaraokeBadge.classList.remove('lit');
+    }
+
+    // Update marquee
+    if (winampMarquee && winampCurrentIndex !== -1) {
+      const track = winampPlaylist[winampCurrentIndex];
+      const hqLabel = isHqAudioEnabled ? '✨ HQ STABILIZER ACTIVE' : 'RAW';
+      const karaokeLabel = isKaraokeMode ? ' • 🎤 KARAOKE (VOCAL OFF)' : '';
+      winampMarquee.textContent = `▶ ${track.title} [${track.channel || 'YouTube'}] • ${hqLabel}${karaokeLabel} • ZERO DISK • `;
+    }
+
+    // Toast notification
+    if (isKaraokeMode) {
+      toast('success', '🎤 Mode Karaoke Aktif!', 'Vokal penyanyi ditiadakan secara halus tanpa memotong lagu. Musik & bassline tetap utuh!');
+    } else {
+      toast('info', '🎙️ Vokal Dipulihkan', 'Vokal penyanyi kembali masuk dengan transisi halus.');
+    }
+
+    // SILKY-SMOOTH REAL-TIME CROSSFADE (Zero stream reload, zero restart, exactly in place)
+    setKaraokeTransition(isKaraokeMode);
+  });
+}
+
+function playNextWinampTrack() {
+  if (winampPlaylist.length === 0) return;
+
+  if (isWinampRepeat && winampCurrentIndex !== -1) {
+    playWinampTrack(winampCurrentIndex);
+    return;
+  }
+
+  let nextIdx;
+  if (isWinampShuffle && winampPlaylist.length > 1) {
+    do {
+      nextIdx = Math.floor(Math.random() * winampPlaylist.length);
+    } while (nextIdx === winampCurrentIndex && winampPlaylist.length > 1);
+  } else {
+    nextIdx = winampCurrentIndex + 1;
+    if (nextIdx >= winampPlaylist.length) {
+      const currentTrack = winampPlaylist[winampCurrentIndex];
+      if (currentTrack) {
+        toast('info', 'Auto Mix Discovery', 'Mencari lagu variasi baru di YouTube untuk melanjutkan pemutaran...');
+        handleSmartRadioMix(currentTrack.url || currentTrack.title);
+        return;
+      }
+      nextIdx = 0;
+    }
+  }
+  playWinampTrack(nextIdx);
+}
+
+if (winampEjectBtn) {
+  winampEjectBtn.addEventListener('click', () => {
+    if (winampSearchInput) {
+      winampSearchInput.focus();
+      winampSearchInput.select();
+    }
+    toast('info', 'Eject Winamp', 'Masukkan judul atau link lagu di kotak input.');
+  });
+}
+
+// Play track by index (with HQ Audio Stabilization & Normalization support)
+async function playWinampTrack(index, startTime = 0) {
+  if (index < 0 || index >= winampPlaylist.length) return;
+  winampCurrentIndex = index;
+  const track = winampPlaylist[index];
+
+  renderWinampPlaylist();
+
+  const hqLabel = isHqAudioEnabled ? '✨ HQ STABILIZER ACTIVE (-14 LUFS)' : 'RAW DIRECT';
+  const karaokeLabel = isKaraokeMode ? ' • 🎤 KARAOKE (VOCAL OFF)' : '';
+  if (winampMarquee) {
+    winampMarquee.textContent = `▶ NOW STREAMING: ${track.title} [${track.channel || 'YouTube'}] • ${hqLabel}${karaokeLabel} • ZERO DISK • `;
+  }
+  if (winampLoading) winampLoading.style.display = 'block';
+
+  // Load lyrics for active track
+  loadLyricsForTrack(track.title, track.channel, track.url);
+
+  try {
+    initWebAudioGraph();
+    if (webAudioCtx && webAudioCtx.state === 'suspended') {
+      webAudioCtx.resume();
+    }
+
+    const timeParam = startTime > 0 ? `&t=${encodeURIComponent(startTime)}` : '';
+    const hqParam = isHqAudioEnabled ? '&hq=1' : '&raw=true';
+    const playUrl = `/api/stream-live-play?url=${encodeURIComponent(track.url)}${hqParam}${timeParam}`;
+    winampAudio.src = playUrl;
+    await winampAudio.play();
+    isWinampPlaying = true;
+    startWinampVisualizer();
+    const modeLabel = isKaraokeMode ? 'Karaoke (Vocal Off)' : (isHqAudioEnabled ? 'HQ Audio Stabilized' : 'Normal');
+    toast('success', 'Winamp Streaming', `Memutar: "${track.title}" (${modeLabel})`);
+  } catch (err) {
+    console.error('Play error', err);
+    toast('warning', 'Buffer Stream', 'Sedang menyambungkan ke stream audio YouTube...');
+  } finally {
+    if (winampLoading) winampLoading.style.display = 'none';
+  }
+}
+
+// Render Playlist
+function renderWinampPlaylist() {
+  if (!winampPlaylistList) return;
+  if (winampPlCount) winampPlCount.textContent = winampPlaylist.length;
+  if (winampPlCountTab) winampPlCountTab.textContent = winampPlaylist.length;
+
+  if (winampPlaylist.length === 0) {
+    winampPlaylistList.innerHTML = `
+      <div class="winamp-pl-empty">
+        <i class="fas fa-music" style="font-size:24px;margin-bottom:8px;opacity:0.5"></i>
+        <p>Playlist Winamp masih kosong.</p>
+        <small>Cari lagu YouTube di atas untuk memutar audio live secara instan tanpa mengunduh berkas & hemat kuota.</small>
+      </div>
+    `;
+    return;
+  }
+
+  winampPlaylistList.innerHTML = winampPlaylist.map((item, idx) => {
+    const isActive = idx === winampCurrentIndex;
+    return `
+      <div class="winamp-pl-item ${isActive ? 'active' : ''}" onclick="playWinampTrack(${idx})">
+        <div class="winamp-pl-col-num">${isActive ? '<i class="fas fa-volume-high" style="color:#00ff66"></i>' : (idx + 1) + '.'}</div>
+        <div class="winamp-pl-col-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</div>
+        <div style="font-size:0.7rem;color:#64748b">${escapeHtml(item.channel || '')}</div>
+        <div class="winamp-pl-col-dur">${item.durationFormatted || '--:--'}</div>
+        <div style="display:flex;gap:4px;margin-left:6px" onclick="event.stopPropagation()">
+          <button type="button" class="bf-play" style="width:26px;height:26px;font-size:11px;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff" onclick="handleSmartRadioMix('${encodeURIComponent(item.url || item.title)}')" title="Putar Smart Radio Mix Berdasarkan Lagu Ini (Variasi Hits)"><i class="fas fa-radio"></i></button>
+          <button type="button" class="bf-play" style="width:26px;height:26px;font-size:11px" onclick="triggerDownloadFromWinamp('${encodeURIComponent(item.url)}')" title="Unduh MP3 Lagu Ini"><i class="fas fa-download"></i></button>
+          <button type="button" class="bf-play" style="width:26px;height:26px;font-size:11px;background:#ef4444" onclick="removeWinampTrack(${idx})" title="Hapus dari Playlist"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function removeWinampTrack(idx) {
+  if (idx === winampCurrentIndex) {
+    winampAudio.pause();
+    winampAudio.currentTime = 0;
+    isWinampPlaying = false;
+  }
+  winampPlaylist.splice(idx, 1);
+  if (winampCurrentIndex >= winampPlaylist.length) {
+    winampCurrentIndex = winampPlaylist.length - 1;
+  }
+  renderWinampPlaylist();
+}
+
+function triggerDownloadFromWinamp(encodedUrl) {
+  const url = decodeURIComponent(encodedUrl);
+  switchMode('url');
+  if (urlInput) {
+    urlInput.value = url;
+    fetchVideoInfo();
+  }
+}
+
+// Search or Add to Winamp (Powered by Smart Multi-Band Anti-Monoton Engine)
+async function handleWinampSearch() {
+  if (!winampSearchInput) return;
+  const q = winampSearchInput.value.trim();
+  if (!q) {
+    toast('warning', 'Input Kosong', 'Ketik judul lagu YouTube atau tempel URL');
+    return;
+  }
+
+  // If user pasted a direct URL, fetch and play directly
+  if (q.startsWith('http://') || q.startsWith('https://')) {
+    if (winampLoading) winampLoading.style.display = 'block';
+    try {
+      const res = await fetch('/api/info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: q })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Gagal mengambil informasi URL');
+
+      winampPlaylist.push({
+        title: data.title || 'YouTube Audio',
+        url: q,
+        channel: data.author || 'YouTube',
+        durationFormatted: data.durationFormatted || '--:--'
+      });
+      renderWinampPlaylist();
+      playWinampTrack(winampPlaylist.length - 1);
+    } catch (err) {
+      toast('error', 'Error Winamp', err.message);
+    } finally {
+      if (winampLoading) winampLoading.style.display = 'none';
+    }
+    return;
+  }
+
+  // For text searches (misal: "cinta yang sempurna", "peterpan"):
+  // RUTE OTOMATIS KE SMART MULTI-BAND RADIO MIX (Anti-Lagu Kembar & Variatif)
+  handleSmartRadioMix(q);
+}
+
+// Smart Radio Mix Handler (Anti-monoton / variasi lagu hits sejenis)
+async function handleSmartRadioMix(forcedQuery) {
+  let q = forcedQuery ? decodeURIComponent(forcedQuery) : (winampSearchInput ? winampSearchInput.value.trim() : '');
+
+  // If query is empty, use current playing track or first track in playlist
+  if (!q && winampCurrentIndex >= 0 && winampPlaylist[winampCurrentIndex]) {
+    q = winampPlaylist[winampCurrentIndex].url || winampPlaylist[winampCurrentIndex].title;
+  } else if (!q && winampPlaylist.length > 0) {
+    q = winampPlaylist[0].url || winampPlaylist[0].title;
+  }
+
+  if (!q) {
+    toast('warning', 'Smart Radio Mix', 'Ketik judul lagu (misal: cinta yang sempurna) atau putar lagu untuk memulai alur variasi');
+    if (winampSearchInput) winampSearchInput.focus();
+    return;
+  }
+
+  if (winampLoading) winampLoading.style.display = 'block';
+  if (winampMarquee) winampMarquee.textContent = `📻 MERACIK ALUR SMART MULTI-BAND DARI: "${q}"... MEMADUKAN PETERPAN, BOOMERANG, DEWA 19 & HITS SEJENIS TANPA DUPLIKAT...`;
+
+  try {
+    const isUrl = q.startsWith('http://') || q.startsWith('https://');
+    const param = isUrl ? `url=${encodeURIComponent(q)}` : `q=${encodeURIComponent(q)}`;
+    const res = await fetch(`/api/radio-mix?${param}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal memuat Smart Radio Mix');
+
+    if (!data.results || data.results.length === 0) {
+      toast('warning', 'Radio Mix Kosong', 'Tidak menemukan rekomendasi lagu yang sesuai');
+      return;
+    }
+
+    const wasEmpty = winampPlaylist.length === 0;
+    const startIndex = winampPlaylist.length;
+
+    // Filter duplicates against existing playlist
+    const existingTitles = new Set(winampPlaylist.map(p => (p.title || '').toLowerCase().replace(/[^a-z0-9]/g, '')));
+    let addedCount = 0;
+
+    data.results.forEach(r => {
+      const cleanNorm = (r.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!existingTitles.has(cleanNorm)) {
+        existingTitles.add(cleanNorm);
+        winampPlaylist.push({
+          title: r.title,
+          url: r.url,
+          channel: r.channel,
+          durationFormatted: r.durationFormatted
+        });
+        addedCount++;
+      }
+    });
+
+    renderWinampPlaylist();
+    toast('success', '📻 Smart Multi-Band Siap!', `${addedCount} lagu variatif (Peterpan, Boomerang, dll.) dimuat tanpa judul kembar!`);
+
+    // Auto-play the first new song if Winamp was idle/empty
+    if (wasEmpty || winampCurrentIndex === -1) {
+      playWinampTrack(0);
+    } else if (!isWinampPlaying) {
+      playWinampTrack(startIndex);
+    }
+  } catch (err) {
+    console.error('Radio mix error:', err);
+    toast('error', 'Radio Mix Gagal', err.message);
+  } finally {
+    if (winampLoading) winampLoading.style.display = 'none';
+  }
+}
+window.handleSmartRadioMix = handleSmartRadioMix;
+
+// Taste & History-Based Music Mix Handler
+async function handleTasteMix() {
+  if (winampLoading) winampLoading.style.display = 'block';
+  if (winampMarquee) winampMarquee.textContent = '🎧 MENYIAPKAN ALIRAN SELERA MUSIK & HISTORI YOUTUBE ANDA... MEMADUKAN PETERPAN, BOOMERANG, DEWA 19, EBIET & ARTIS FAVORIT...';
+
+  try {
+    const res = await fetch('/api/taste-mix');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Gagal memuat aliran selera musik');
+
+    if (!data.results || data.results.length === 0) {
+      toast('warning', 'Histori Kosong', 'Belum ada data selera musik yang cukup');
+      return;
+    }
+
+    const wasEmpty = winampPlaylist.length === 0;
+    const startIndex = winampPlaylist.length;
+
+    const existingTitles = new Set(winampPlaylist.map(p => (p.title || '').toLowerCase().replace(/[^a-z0-9]/g, '')));
+    let addedCount = 0;
+
+    data.results.forEach(r => {
+      const cleanNorm = (r.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!existingTitles.has(cleanNorm)) {
+        existingTitles.add(cleanNorm);
+        winampPlaylist.push({
+          title: r.title,
+          url: r.url,
+          channel: r.channel,
+          durationFormatted: r.durationFormatted
+        });
+        addedCount++;
+      }
+    });
+
+    renderWinampPlaylist();
+    toast('success', '🎧 Aliran Selera Siap!', `${addedCount} lagu favorit berdasarkan selera Anda telah dimuat`);
+
+    if (wasEmpty || winampCurrentIndex === -1) {
+      playWinampTrack(0);
+    } else if (!isWinampPlaying) {
+      playWinampTrack(startIndex);
+    }
+  } catch (err) {
+    console.error('Taste mix error:', err);
+    toast('error', 'Gagal Memuat Selera Musik', err.message);
+  } finally {
+    if (winampLoading) winampLoading.style.display = 'none';
+  }
+}
+window.handleTasteMix = handleTasteMix;
+
+if (winampTasteBtn) winampTasteBtn.addEventListener('click', handleTasteMix);
+if (winampRadioBtn) winampRadioBtn.addEventListener('click', () => handleSmartRadioMix());
+if (winampSearchBtn) winampSearchBtn.addEventListener('click', handleWinampSearch);
+if (winampSearchInput) {
+  winampSearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') handleWinampSearch();
+  });
+}
+if (winampPasteBtn) {
+  winampPasteBtn.addEventListener('click', async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text && winampSearchInput) {
+        winampSearchInput.value = text.trim();
+        handleWinampSearch();
+      }
+    } catch {
+      toast('warning', 'Clipboard', 'Gagal membaca clipboard. Tempel manual dengan Ctrl+V');
+    }
+  });
+}
+if (winampClearPlBtn) {
+  winampClearPlBtn.addEventListener('click', () => {
+    winampAudio.pause();
+    winampAudio.currentTime = 0;
+    isWinampPlaying = false;
+    winampPlaylist = [];
+    winampCurrentIndex = -1;
+    currentLyrics = [];
+    currentLyricIndex = -1;
+    rawLyricsText = '';
+    if (winampLyricsStatusBadge) {
+      winampLyricsStatusBadge.textContent = 'READY';
+      winampLyricsStatusBadge.style.color = '#00ff66';
+    }
+    if (winampTabLyricsBadge) {
+      winampTabLyricsBadge.textContent = 'READY';
+      winampTabLyricsBadge.style.color = '#00ff66';
+    }
+    if (winampLcdKaraokeText) {
+      winampLcdKaraokeText.textContent = 'Lirik karaoke vokal akan menyala di sini saat lagu diputar...';
+    }
+    if (winampLyricsBody) {
+      winampLyricsBody.innerHTML = `
+        <div class="winamp-lyrics-placeholder" id="winampLyricsPlaceholder">
+          <i class="fas fa-microphone" style="font-size:32px;color:#a855f7;margin-bottom:12px;opacity:0.6"></i>
+          <h4 style="color:#e2e8f0;font-size:0.95rem;margin-bottom:6px">Lirik Sinkron Berjalan</h4>
+          <p style="color:#64748b;font-size:0.8rem;max-width:280px;margin:0 auto">Putar lagu apa saja di Winamp. Lirik akan muncul dan bergulir otomatis mengikuti alunan vokal penyanyi secara real-time.</p>
+        </div>
+      `;
+    }
+    renderWinampPlaylist();
+    if (winampTimer) winampTimer.textContent = '00:00';
+    if (winampMarquee) winampMarquee.textContent = '⚡ WINAMP READY • PLAYLIST DIBERSIHKAN ⚡';
+    toast('info', 'Playlist Kosong', 'Seluruh antrian lagu Winamp telah dibersihkan');
+  });
+}
+
+// ========== WINAMP SYNCHRONIZED KARAOKE LYRICS ENGINE ==========
+function startLyricsSyncTimer() {
+  if (lyricsSyncInterval) clearInterval(lyricsSyncInterval);
+  lyricsSyncInterval = setInterval(checkLyricsSyncFrame, 30);
+}
+
+function stopLyricsSyncTimer() {
+  if (lyricsSyncInterval) {
+    clearInterval(lyricsSyncInterval);
+    lyricsSyncInterval = null;
+  }
+}
+
+function checkLyricsSyncFrame() {
+  if (!winampAudio.duration || !currentLyrics || currentLyrics.length === 0) return;
+  const cur = winampAudio.currentTime;
+  const totalOffset = autoDetectedOffset + userLyricOffset;
+
+  let activeIdx = -1;
+  for (let i = 0; i < currentLyrics.length; i++) {
+    const triggerTime = currentLyrics[i].time + totalOffset;
+    if (triggerTime <= cur) {
+      activeIdx = i;
+    } else {
+      break;
+    }
+  }
+
+  if (activeIdx !== currentLyricIndex) {
+    currentLyricIndex = activeIdx;
+    updateActiveLyricLine(activeIdx);
+  }
+}
+
+// Adjust offset manually (+ means delay lyrics, - means advance lyrics)
+function adjustLyricOffset(delta) {
+  userLyricOffset = parseFloat((userLyricOffset + delta).toFixed(2));
+  updateOffsetUI();
+  if (currentTrackStorageKey) {
+    try { localStorage.setItem('lyric_offset_' + currentTrackStorageKey, userLyricOffset); } catch (e) {}
+  }
+  const actionText = delta > 0 ? 'diperlambat (+0.2s)' : 'dipercepat (-0.2s)';
+  toast('info', 'Kalibrasi Vokal', `Offset lirik diubah ke: ${userLyricOffset >= 0 ? '+' : ''}${userLyricOffset.toFixed(1)}s`);
+  checkLyricsSyncFrame();
+}
+window.adjustLyricOffset = adjustLyricOffset;
+
+function resetLyricOffset() {
+  userLyricOffset = 0;
+  updateOffsetUI();
+  if (currentTrackStorageKey) {
+    try { localStorage.removeItem('lyric_offset_' + currentTrackStorageKey); } catch (e) {}
+  }
+  toast('info', 'Reset Kalibrasi', 'Offset timing lirik dikembalikan ke standar (0.0s)');
+  checkLyricsSyncFrame();
+}
+window.resetLyricOffset = resetLyricOffset;
+
+function updateOffsetUI() {
+  if (winampSyncValLabel) {
+    const total = autoDetectedOffset + userLyricOffset;
+    winampSyncValLabel.textContent = `${total >= 0 ? '+' : ''}${total.toFixed(1)}s`;
+    winampSyncValLabel.style.color = Math.abs(total) > 0.05 ? '#00ff66' : '#a855f7';
+  }
+  if (winampAutoSyncNotice) {
+    if (Math.abs(autoDetectedOffset) > 0.5) {
+      winampAutoSyncNotice.innerHTML = `<span>⚡ Auto-Intro: ${autoDetectedOffset >= 0 ? '+' : ''}${autoDetectedOffset.toFixed(1)}s</span>`;
+    } else if (Math.abs(userLyricOffset) > 0.05) {
+      winampAutoSyncNotice.innerHTML = `<span>🎯 Custom: ${userLyricOffset >= 0 ? '+' : ''}${userLyricOffset.toFixed(1)}s</span>`;
+    } else {
+      winampAutoSyncNotice.innerHTML = `<span>⚡ Natural Vocal Sync</span>`;
+    }
+  }
+}
+
+async function loadLyricsForTrack(title, channel, url) {
+  if (!winampLyricsBody) return;
+  const storageKey = (title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  // If lyrics for this exact track are ALREADY loaded, preserve state and do not reload!
+  if (storageKey && storageKey === currentTrackStorageKey && currentLyrics && currentLyrics.length > 0) {
+    return;
+  }
+
+  if (lyricsAbortController) {
+    lyricsAbortController.abort();
+  }
+  lyricsAbortController = new AbortController();
+
+  currentLyrics = [];
+  currentLyricIndex = -1;
+  rawLyricsText = '';
+  currentTrackStorageKey = storageKey;
+
+  const savedOffset = localStorage.getItem('lyric_offset_' + currentTrackStorageKey);
+  if (savedOffset !== null) {
+    userLyricOffset = parseFloat(savedOffset) || 0;
+  } else {
+    userLyricOffset = 0;
+  }
+  autoDetectedOffset = 0;
+  updateOffsetUI();
+
+  const setStatusBadge = (txt, color) => {
+    if (winampLyricsStatusBadge) {
+      winampLyricsStatusBadge.textContent = txt;
+      winampLyricsStatusBadge.style.color = color;
+    }
+    if (winampTabLyricsBadge) {
+      winampTabLyricsBadge.textContent = txt;
+      winampTabLyricsBadge.style.color = color;
+    }
+  };
+
+  setStatusBadge('SEARCHING...', '#38bdf8');
+  if (winampLcdKaraokeText) {
+    winampLcdKaraokeText.textContent = `Mencari lirik vokal untuk: "${title}"...`;
+  }
+
+  winampLyricsBody.innerHTML = `
+    <div class="winamp-lyrics-placeholder">
+      <span class="spinner" style="width:24px;height:24px;border-width:2px;display:inline-block;margin-bottom:12px"></span>
+      <p style="color:#a0a0c0;font-size:0.85rem">Mencari lirik sinkron untuk:<br><strong style="color:#00ff66">${escapeHtml(title)}</strong></p>
+      <small style="color:#64748b;margin-top:6px;font-size:0.75rem">Menghubungkan ke database lirik LRCLIB & metadata YouTube...</small>
+    </div>
+  `;
+
+  try {
+    const params = new URLSearchParams({
+      title: title || '',
+      artist: channel || '',
+      url: url || ''
+    });
+    const res = await fetch(`/api/lyrics?${params.toString()}`, { signal: lyricsAbortController.signal });
+    const data = await res.json();
+
+    if (!data.success || !data.lines || data.lines.length === 0) {
+      setStatusBadge('NO LYRICS', '#94a3b8');
+      if (winampLcdKaraokeText) {
+        winampLcdKaraokeText.textContent = `Lirik vokal belum tersedia untuk lagu ini`;
+      }
+      winampLyricsBody.innerHTML = `
+        <div class="winamp-lyrics-placeholder">
+          <i class="fas fa-microphone-slash" style="font-size:32px;color:#64748b;margin-bottom:10px;opacity:0.5"></i>
+          <p style="color:#e2e8f0;font-size:0.85rem;font-weight:600">Lirik belum tersedia untuk lagu ini</p>
+          <small style="color:#64748b;margin-top:4px">Lagu tetap diputar lancar dengan penjernih suara HQ Audio Stabilizer.</small>
+        </div>
+      `;
+      return;
+    }
+
+    currentLyrics = data.lines;
+    rawLyricsText = data.plainLyrics || data.lines.map(l => l.text).join('\n');
+
+    if (data.autoOffset && data.autoOffset > 0) {
+      autoDetectedOffset = data.autoOffset;
+    }
+    updateOffsetUI();
+
+    setStatusBadge(data.synced ? 'SYNCED' : 'AUTO-SCROLL', data.synced ? '#00ff66' : '#f59e0b');
+    if (winampLcdKaraokeText) {
+      winampLcdKaraokeText.textContent = `🎶 [${data.synced ? 'Lirik Sinkron' : 'Lirik Auto-Scroll'}] Siap bernyanyi bersama...`;
+    }
+
+    winampLyricsBody.innerHTML = `
+      <div style="padding-top:60px;padding-bottom:120px">
+        ${currentLyrics.map((l, i) => `
+          <div class="winamp-lyric-line" data-index="${i}" data-time="${l.time}" onclick="seekToLyric(${l.time})">
+            ${escapeHtml(l.text)}
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    // Start 30ms high-precision sync loop if already playing
+    if (isWinampPlaying) {
+      startLyricsSyncTimer();
+    }
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    console.error('Error fetching lyrics:', err);
+    setStatusBadge('ERROR', '#ef4444');
+    if (winampLcdKaraokeText) {
+      winampLcdKaraokeText.textContent = `Lirik gagal dimuat: ${err.message || 'Koneksi terputus'}`;
+    }
+    winampLyricsBody.innerHTML = `
+      <div class="winamp-lyrics-placeholder">
+        <i class="fas fa-exclamation-triangle" style="font-size:28px;color:#ef4444;margin-bottom:8px"></i>
+        <p style="color:#e2e8f0;font-size:0.85rem">Gagal memuat lirik</p>
+        <small style="color:#64748b">${escapeHtml(err.message || 'Koneksi terputus')}</small>
+      </div>
+    `;
+  }
+}
+
+function updateActiveLyricLine(idx) {
+  if (idx === -1) {
+    if (winampLcdKaraokeText) {
+      winampLcdKaraokeText.textContent = `🎶 [Intro Musik...] Siap bernyanyi...`;
+    }
+    if (winampLyricsBody) {
+      const lines = winampLyricsBody.querySelectorAll('.winamp-lyric-line');
+      lines.forEach(el => {
+        el.classList.remove('active');
+        el.classList.remove('past');
+      });
+      winampLyricsBody.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    return;
+  }
+
+  if (winampLcdKaraokeText && currentLyrics && currentLyrics[idx]) {
+    winampLcdKaraokeText.textContent = `🎤 ${currentLyrics[idx].text}`;
+  }
+  if (!winampLyricsBody) return;
+  const lines = winampLyricsBody.querySelectorAll('.winamp-lyric-line');
+  lines.forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+    el.classList.toggle('past', i < idx);
+  });
+  const activeEl = winampLyricsBody.querySelector(`.winamp-lyric-line[data-index="${idx}"]`);
+  if (activeEl) {
+    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function seekToLyric(time) {
+  if (winampCurrentIndex === -1 || !winampPlaylist[winampCurrentIndex]) return;
+  const targetAudioTime = Math.max(0, time + autoDetectedOffset + userLyricOffset);
+  try {
+    if (winampAudio.duration && isFinite(winampAudio.duration)) {
+      winampAudio.currentTime = targetAudioTime;
+      if (winampAudio.paused) winampAudio.play();
+      checkLyricsSyncFrame();
+      return;
+    }
+  } catch (e) {
+    console.warn('Seek error:', e);
+  }
+}
+window.seekToLyric = seekToLyric;
+
+// Winamp Bottom Grid View Switcher
+function setWinampView(view) {
+  const grid = $('#winampBottomGrid');
+  if (!grid) return;
+  grid.classList.remove('view-playlist', 'view-lyrics');
+  if (view === 'playlist') grid.classList.add('view-playlist');
+  if (view === 'lyrics') grid.classList.add('view-lyrics');
+
+  const btnSplit = $('#winampTabSplit');
+  const btnLyrics = $('#winampTabLyrics');
+  const btnPlaylist = $('#winampTabPlaylist');
+
+  if (btnSplit) btnSplit.classList.toggle('active', view === 'split');
+  if (btnLyrics) btnLyrics.classList.toggle('active', view === 'lyrics');
+  if (btnPlaylist) btnPlaylist.classList.toggle('active', view === 'playlist');
+
+  try { localStorage.setItem('winamp_view_mode', view); } catch (e) {}
+}
+window.setWinampView = setWinampView;
+
+// Initialize view mode
+const savedViewMode = localStorage.getItem('winamp_view_mode') || 'split';
+setWinampView(savedViewMode);
+
+if (winampLyricsCopyBtn) {
+  winampLyricsCopyBtn.addEventListener('click', async () => {
+    if (!rawLyricsText) {
+      toast('warning', 'Lirik Kosong', 'Belum ada lirik yang dimuat untuk lagu ini');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(rawLyricsText);
+      toast('success', 'Lirik Disalin', 'Seluruh lirik lagu berhasil disalin ke clipboard');
+    } catch {
+      toast('warning', 'Gagal', 'Tidak dapat mengakses clipboard browser');
+    }
+  });
+}
+
+// Spectrum Visualizer Animation Engine
+function startWinampVisualizer() {
+  if (winampVisRunning) return;
+  winampVisRunning = true;
+  requestAnimationFrame(drawWinampFrame);
+}
+
+function drawWinampFrame() {
+  if (!winampCanvas) return;
+  const ctx = winampCanvas.getContext('2d');
+  const w = winampCanvas.width;
+  const h = winampCanvas.height;
+
+  ctx.fillStyle = '#020603';
+  ctx.fillRect(0, 0, w, h);
+
+  const numBars = 16;
+  const barWidth = 8;
+  const spacing = 3;
+  const totalWidth = numBars * (barWidth + spacing);
+  const startX = (w - totalWidth) / 2;
+
+  for (let i = 0; i < numBars; i++) {
+    let target = 0;
+    if (isWinampPlaying) {
+      const t = winampAudio.currentTime * 8;
+      const baseFreq = Math.sin(t * 1.5 + i * 0.6) * 0.5 + 0.5;
+      const beat = (Math.sin(t * 3.2) > 0.6 ? 0.4 : 0) + (Math.sin(t * 5.7) > 0.7 ? 0.3 : 0);
+      const curve = (1 - (i / numBars) * 0.4);
+      target = Math.min(Math.max((baseFreq * 0.6 + beat * 0.4) * curve, 0.05), 0.98);
+    }
+
+    currentBars[i] += (target - currentBars[i]) * 0.25;
+
+    if (currentBars[i] >= peakBars[i]) {
+      peakBars[i] = currentBars[i];
+    } else {
+      peakBars[i] -= 0.015;
+      if (peakBars[i] < 0) peakBars[i] = 0;
+    }
+
+    const barHeight = currentBars[i] * (h - 6);
+    const x = startX + i * (barWidth + spacing);
+    const y = h - barHeight;
+
+    const grad = ctx.createLinearGradient(0, h, 0, 0);
+    grad.addColorStop(0, '#00ff66');
+    grad.addColorStop(0.65, '#facc15');
+    grad.addColorStop(1, '#ef4444');
+
+    ctx.fillStyle = grad;
+    const segHeight = 3;
+    const segGap = 1;
+    for (let sy = h; sy > y; sy -= (segHeight + segGap)) {
+      ctx.fillRect(x, sy - segHeight, barWidth, segHeight);
+    }
+
+    if (peakBars[i] > 0.05) {
+      const peakY = h - (peakBars[i] * (h - 6)) - 3;
+      ctx.fillStyle = peakBars[i] > 0.75 ? '#ef4444' : peakBars[i] > 0.5 ? '#facc15' : '#00ff66';
+      ctx.fillRect(x, Math.max(peakY, 1), barWidth, 1.5);
+    }
+  }
+
+  if (isWinampPlaying || currentBars.some(b => b > 0.02)) {
+    requestAnimationFrame(drawWinampFrame);
+  } else {
+    winampVisRunning = false;
+  }
+}
+
+// ========== EXPORT M3U PLAYLIST ==========
+const exportM3uBtn = $('#exportM3uBtn');
+if (exportM3uBtn) {
+  exportM3uBtn.addEventListener('click', () => {
+    window.location.href = '/api/export-m3u';
+    toast('info', 'Export M3U', 'Mengunduh playlist .M3U untuk pemutar musik offline/mobil...');
+  });
+}
+
+// ========== INIT ==========
+const loudnormToggle = $('#loudnormToggle');
+if (loudnormToggle) {
+  const savedRemaster = localStorage.getItem('yt_studio_remaster');
+  if (savedRemaster !== null) {
+    loudnormToggle.checked = (savedRemaster === 'true');
+  }
+  loudnormToggle.addEventListener('change', () => {
+    localStorage.setItem('yt_studio_remaster', loudnormToggle.checked);
+    if (loudnormToggle.checked) {
+      toast('info', 'Studio Remaster Aktif', 'Audio akan dijernihkan & volume distabilkan ke standar EBU R128 (-14 LUFS).');
+    }
+  });
+}
+
+renderHistory();
+syncHistoryFromDB();
+loadSystemStatus();
+resumeActiveJobIfAny();
+</script>
+</body>
+</html>

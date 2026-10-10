@@ -1,0 +1,19 @@
+[Unit]
+Description=Khanza.NET - YT Downloader Pro Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/youtube-download
+ExecStart=/usr/bin/node /opt/youtube-download/server.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# Limit resource if needed
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

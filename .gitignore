@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Downloaded media & temporary bundles
+downloads/*
+!downloads/.gitkeep
+
+# SQLite database files
+database.sqlite
+database.sqlite-wal
+database.sqlite-shm
+
+# Environment & logs
+.env
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db
