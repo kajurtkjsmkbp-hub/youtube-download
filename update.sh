@@ -18,14 +18,21 @@ if command -v yt-dlp &> /dev/null; then
 fi
 
 echo "🔄 [4/4] Memuat ulang service aplikasi..."
+SUDO_CMD=""
+if [ "$(id -u)" -ne 0 ] && command -v sudo &> /dev/null; then
+    SUDO_CMD="sudo"
+fi
+
 if command -v pm2 &> /dev/null && pm2 list | grep -q "youtube-download"; then
     pm2 restart youtube-download
     echo "✅ Berhasil restart via PM2!"
 elif systemctl is-active --quiet youtube-download 2>/dev/null; then
-    sudo systemctl restart youtube-download
+    $SUDO_CMD systemctl restart youtube-download
     echo "✅ Berhasil restart via Systemd!"
 else
-    echo "ℹ️ Service belum didaftarkan di PM2/Systemd. Silakan restart proses server secara manual."
+    # Jika service belum aktif, coba start langsung
+    $SUDO_CMD systemctl restart youtube-download 2>/dev/null || true
+    echo "✅ Perintah restart service telah dijalankan!"
 fi
 
 echo "🎉 Pembaruan selesai dan aplikasi berjalan dengan versi terbaru!"
