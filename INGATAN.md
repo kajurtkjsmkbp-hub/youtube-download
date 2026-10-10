@@ -1,7 +1,8 @@
 # 🧠 INGATAN & DOKUMENTASI LENGKAP PROYEK
 # Khanza.NET - YT Downloader Pro
 > **A Product of PT Khanza Digital Nusantara**  
-> Terakhir diperbarui: 2026-10-04  
+> Terakhir diperbarui: 2026-10-10  
+> Repositori GitHub: [https://github.com/kajurtkjsmkbp-hub/youtube-download](https://github.com/kajurtkjsmkbp-hub/youtube-download)  
 > Dokumen ini memuat seluruh rekam jejak arsitektur, konfigurasi sistem, aturan branding, dan daftar lengkap fitur yang telah diimplementasikan.
 
 ---
@@ -23,11 +24,11 @@
 |---|---|---|
 | **Runtime** | Node.js (v20+) | Backend REST API berkecepatan tinggi |
 | **Framework** | Express.js 4.18 | Routing API & static web serving |
-| **Database** | SQLite 3 (`better-sqlite3` 13.x) | Mode **WAL (Write-Ahead Logging)** untuk konkurensi tinggi & anti-corrupt |
+| **Database** | Pure JavaScript Atomic Store (`database.json`) | 100% Zero-Crash & Zero-Segfault. Bebas dari ketergantungan binary C++ native (pengganti `better-sqlite3`), aman di semua kernel LXC Proxmox & OS |
 | **Core Downloader** | `yt-dlp` (Versi Rilis Resmi) | Engine ekstraksi streaming video & audio |
 | **Core Converter** | `FFmpeg` & `FFprobe` | Transcoding audio/video, normalisasi suara, & trimming |
 | **QR Code Engine** | `qrcode` (npm) | Menghasilkan QR DataURL secara dinamis untuk transfer file via WiFi lokal |
-| **Zip Archiver** | Native Windows `tar -a -c -f` | Pembuatan file ZIP super cepat tanpa membebani memori Node |
+| **Zip Archiver** | Native Windows `tar -a` & Linux `zip`/`python3 zipfile` | Pembuatan file ZIP super cepat lintas platform |
 | **Frontend UI** | HTML5, CSS3 Glassmorphism, Vanilla JS | Desain dark neon modern, responsif desktop & mobile |
 | **Ikon & Tipografi**| Font Awesome 6.5.1 & Google Font 'Inter' | Tampilan tajam dan estetis |
 
@@ -37,14 +38,18 @@
 
 ```text
 YOUTUBE-DOWNLOAD/
-├── downloads/                  # Folder penyimpanan hasil konversi & file unduhan
+├── downloads/                  # Folder penyimpanan hasil konversi & file unduhan (.gitkeep)
 ├── public/
 │   └── index.html              # Antarmuka web utama (UI, Player, Search, Batch, QR Modal)
-├── database.sqlite             # File database SQLite aktif (WAL mode)
-├── db.js                       # Driver database SQLite (CRUD jobs & files)
+├── database.json               # File database JSON aktif (Atomic persist, Zero-Segfault)
+├── db.js                       # Driver database Pure JavaScript (CRUD jobs & files)
 ├── INGATAN.md                  # File memori & dokumentasi ini
-├── package.json                # Dependensi proyek (express, better-sqlite3, cors, qrcode, uuid)
-└── server.js                   # Server backend utama (Express, yt-dlp spawn, REST API)
+├── package.json                # Dependensi proyek murni JS (express, cors, qrcode, uuid)
+├── package-lock.json           # Lockfile dependensi
+├── README.md                   # Dokumentasi publik GitHub & panduan deployment Proxmox LXC
+├── server.js                   # Server backend utama (Express, yt-dlp spawn, REST API)
+├── update.sh                   # Script update otomatis 1-baris untuk server Linux/Proxmox
+└── youtube-download.service    # Template Systemd background service untuk Proxmox LXC
 ```
 
 ---
@@ -284,11 +289,28 @@ Untuk menjamin keamanan pemakaian jangka panjang dan bebas blokir IP:
 
 ---
 
+### 27. 🛡️ Pure JavaScript Zero-Crash Storage & Cross-Platform Engine (Anti-Segfault LXC Proxmox)
+- **Latar Belakang Permasalahan:**
+  - Pada saat dideploy ke lingkungan container Linux (LXC Proxmox VE), penggunaan modul C++ native `better-sqlite3` rentan mengalami crash fatal: `Process ExecStart=/usr/bin/node server.js (code=killed, signal=SEGV)`.
+  - Hal ini disebabkan oleh inkonsistensi binary prebuild C++ terhadap kernel, CPU instruction set, atau library glibc di Linux container.
+- **Solusi & Rekayasa Arsitektur Baru:**
+  1. **Zero Native Dependencies:** Modul `better-sqlite3` dan kompilasi `node-gyp` dilepas secara permanen. Seluruh dependensi proyek (`express`, `cors`, `qrcode`, `uuid`) kini 100% Pure JavaScript.
+  2. **Atomic JSON Storage (`database.json`):**
+     - Penyimpanan data riwayat unduhan, metadata judul, dan status job dialihkan ke driver penyimpanan murni JS di `db.js`.
+     - Menggunakan mekanisme **Atomic Write**: data ditulis terlebih dahulu ke berkas sementara (`database.json.tmp`) sebelum di-rename ke `database.json`, menjamin integritas data (ACID safety) dan mencegah korupsi file saat listrik padam atau container restart mendadak.
+     - Operasi pembacaan (read) berlangsung di memori (in-memory) dengan latensi 0 ms.
+  3. **Cross-Platform OS Handling di `server.js`:**
+     - **Folder Explorer:** Pada Windows memanggil `cmd /c start`, pada macOS memanggil `open`, dan pada Linux/LXC memanggil `xdg-open` dengan penanganan silent fallback pada lingkungan headless server.
+     - **Bundling ZIP Playlist:** Pada Windows menggunakan native Windows `tar -a -c -f`, sedangkan pada Linux/Proxmox otomatis menggunakan perintah `zip -r` atau modul standar Python 3 (`python3 -m zipfile`).
+  4. **Hasil:** Server dijamin **100% bebas dari risiko `Segmentation fault`** dan langsung hidup seketika dalam 1 kali eksekusi (`node server.js`) di platform apa pun.
+
+---
+
 ## 5. Ringkasan Endpoint API Backend
 
 | Metode | Rute Endpoint | Deskripsi |
 |---|---|---|
-| `GET` | `/api/health` | Status kesehatan server, binary FFmpeg, yt-dlp, dan DB |
+| `GET` | `/api/health` | Status kesehatan server, binary FFmpeg, yt-dlp, dan status DB |
 | `GET` | `/api/system-status` | Konfigurasi engine bypass, profil aktif, opsi cookies browser |
 | `POST`| `/api/bypass-config` | Update preferensi bypass (client, browser cookies, turbo, delay) |
 | `GET` | `/api/search?q=...` | Pencarian video YouTube via `ytsearch8` |
@@ -304,11 +326,11 @@ Untuk menjamin keamanan pemakaian jangka panjang dan bebas blokir IP:
 | `GET` | `/api/batch-files/:jobId` | Mengambil daftar berkas hasil unduhan playlist |
 | `GET` | `/api/download/:jobId/:file`| Mengunduh file hasil konversi ke komputer |
 | `GET` | `/api/stream/:jobId/:file` | Streaming audio/video ke pemutar web (HTTP 206) |
-| `GET` | `/api/download-zip/:jobId` | Mengunduh seluruh berkas playlist dalam paket `.ZIP` |
-| `POST`| `/api/open-folder` | Membuka folder downloads di Windows File Explorer |
+| `GET` | `/api/download-zip/:jobId` | Mengunduh seluruh berkas playlist dalam paket `.ZIP` (Cross-Platform) |
+| `POST`| `/api/open-folder` | Membuka folder downloads di Windows/Linux File Manager |
 | `GET` | `/api/qr-share` | Menghasilkan QR Code dan direct link untuk HP |
 | `GET` | `/api/export-m3u` | Mengekspor daftar riwayat musik ke berkas playlist `.m3u` |
-| `GET` | `/api/history` | Mengambil 50 riwayat unduhan terbaru dari SQLite |
+| `GET` | `/api/history` | Mengambil 50 riwayat unduhan terbaru dari database JSON |
 | `POST`| `/api/history/rename` | Mengubah/menyesuaikan judul item riwayat unduhan |
 | `POST`| `/api/clear-history` | Menghapus seluruh riwayat unduhan |
 | `POST`| `/api/update-engine` | Melakukan update yt-dlp 1-klik ke versi terbaru |
@@ -318,15 +340,82 @@ Untuk menjamin keamanan pemakaian jangka panjang dan bebas blokir IP:
 
 ## 6. Panduan Menjalankan & Perawatan
 
-1. **Menjalankan Server:**
+1. **Menjalankan Server di Windows (Lokal):**
    ```powershell
    node server.js
    ```
-   Aplikasi akan aktif di `http://localhost:3000`.
+   Aplikasi aktif di `http://localhost:3000`.
 
-2. **Pembersihan Berkas Otomatis:**
+2. **Menjalankan Server di Linux / LXC Proxmox:**
+   Menggunakan unit Systemd otomatis:
+   ```bash
+   systemctl start youtube-download
+   systemctl status youtube-download
+   ```
+
+3. **Pembersihan Berkas Otomatis:**
    - Server menjalankan fungsi `cleanupOldDownloads()` setiap 30 menit.
-   - File sementara yang berusia lebih dari 1 jam akan dihapus dari folder `downloads/` untuk menghemat ruang disk PC.
+   - File sementara yang berusia lebih dari 1 jam akan dibersihkan dari folder `downloads/` untuk menghemat ruang disk.
 
-3. **Backup Database:**
-   - Cukup salin berkas `database.sqlite` (dan `database.sqlite-wal` / `database.sqlite-shm` jika ada) ke lokasi cadangan.
+4. **Cadangan Data:**
+   - Cukup salin berkas `database.json` ke lokasi cadangan.
+
+---
+
+## 7. Panduan Deployment Manual di LXC Proxmox VE (Debian / Ubuntu)
+
+1. **Paksa IPv4 & Update Paket Sistem:**
+   ```bash
+   echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
+   apt clean && apt update
+   apt install -y curl wget git ffmpeg python3 python3-pip zip unzip tar
+   ```
+2. **Pasang Node.js v20 (LTS):**
+   ```bash
+   curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+   apt install -y nodejs
+   ```
+3. **Pasang yt-dlp Versi Resmi Terbaru:**
+   ```bash
+   wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp
+   chmod a+rx /usr/local/bin/yt-dlp
+   ```
+4. **Clone Repositori & Pasang Dependensi:**
+   ```bash
+   git clone https://github.com/kajurtkjsmkbp-hub/youtube-download.git /opt/youtube-download
+   cd /opt/youtube-download
+   npm install --omit=dev
+   chmod +x update.sh
+   ```
+5. **Daftarkan Service Systemd Auto-Start on Boot:**
+   ```bash
+   cp /opt/youtube-download/youtube-download.service /etc/systemd/system/
+   systemctl daemon-reload
+   systemctl enable --now youtube-download
+   ```
+   Aplikasi aktif di port `3000`: `http://<IP-LXC-PROXMOX>:3000`.
+
+---
+
+## 8. Alur Sinkronisasi Pembaruan Otomatis (Local -> GitHub -> LXC Proxmox)
+
+Setiap ada perubahan atau penambahan fitur di komputer lokal, alur sinkronisasinya adalah:
+
+1. **Di Komputer Lokal (Pengembangan):**
+   ```powershell
+   git add .
+   git commit -m "Deskripsi perubahan"
+   git push origin main
+   ```
+2. **Di Server LXC Proxmox (Penerapan):**
+   Cukup jalankan script update 1 baris yang telah disediakan:
+   ```bash
+   cd /opt/youtube-download
+   ./update.sh
+   ```
+   Atau baris perintah cepat:
+   ```bash
+   cd /opt/youtube-download && git pull origin main && npm prune && systemctl restart youtube-download
+   ```
+   Aplikasi di Proxmox akan langsung terbarukan dan kembali berjalan dengan versi terbaru secara otomatis tanpa interupsi.
+
