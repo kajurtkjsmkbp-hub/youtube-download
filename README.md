@@ -36,10 +36,16 @@ Panduan ini ditujukan untuk deployment pada **LXC Container** di **Proxmox Virtu
 
 Buka **Proxmox Web UI** > Pilih LXC Anda > Buka menu **Console**, lalu jalankan langkah berikut:
 
-#### Langkah 2.1: Update Sistem & Install Paket Pendukung
+#### Langkah 2.1: Refresh Index APT & Install Paket Pendukung
+> 💡 **Tips Proxmox LXC**: Jika menemui error `404 Not Found` atau masalah koneksi IPv6 saat fetch package, paksa APT menggunakan IPv4 terlebih dahulu:
 ```bash
-apt update && apt upgrade -y
-apt install -y curl wget git ffmpeg python3 python3-pip python3-venv build-essential zip unzip tar
+# Paksa APT menggunakan IPv4 (opsional jika jaringan Proxmox tidak memiliki IPv6)
+echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
+
+# Bersihkan cache dan perbarui daftar paket repositori
+apt clean
+apt update
+apt install -y curl wget git ffmpeg python3 python3-pip build-essential zip unzip tar
 ```
 
 #### Langkah 2.2: Install Node.js v20+ (LTS)
