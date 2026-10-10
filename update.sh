@@ -11,7 +11,6 @@ git pull origin main || git pull origin master
 
 echo "📦 [2/4] Memeriksa & menginstal dependensi npm..."
 npm install --omit=dev
-npm rebuild better-sqlite3 --build-from-source
 
 echo "⚡ [3/4] Memperbarui yt-dlp ke versi rilis terbaru..."
 if command -v yt-dlp &> /dev/null; then

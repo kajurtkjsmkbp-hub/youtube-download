@@ -8,10 +8,9 @@ yarn-error.log*
 downloads/*
 !downloads/.gitkeep
 
-# SQLite database files
-database.sqlite
-database.sqlite-wal
-database.sqlite-shm
+# Database files
+database.sqlite*
+database.json*
 
 # Environment & logs
 .env

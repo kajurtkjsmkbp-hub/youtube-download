@@ -76,12 +76,11 @@ git clone https://github.com/kajurtkjsmkbp-hub/youtube-download.git /opt/youtube
 cd /opt/youtube-download
 ```
 
-#### Langkah 2.5: Install Dependensi Node.js & Compile Native SQLite
+#### Langkah 2.5: Install Dependensi Node.js
 ```bash
 npm install --omit=dev
-npm rebuild better-sqlite3 --build-from-source
 ```
-> *Catatan:* Perintah `npm rebuild better-sqlite3 --build-from-source` memastikan driver SQLite dikompilasi langsung sesuai arsitektur Linux/Proxmox container Anda agar tidak terjadi `signal=SEGV`.
+> *Catatan:* Aplikasi menggunakan arsitektur penyimpanan Pure JavaScript Atomic Store (Zero-Native C++), sehingga bebas dari resiko `Segmentation fault` dan langsung terpasang instan dalam beberapa detik.
 
 #### Langkah 2.6: Berikan Hak Akses Eksekusi pada Script
 ```bash
