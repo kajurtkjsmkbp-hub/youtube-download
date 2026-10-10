@@ -12,8 +12,8 @@
 - **🎙️ Web Audio API Vocal Removal**: Fitur Karaoke instrumental instan di browser dengan penghilangan vokal center-channel tanpa memutus koneksi audio (0-restart).
 - **🎛️ Studio Remaster & Dynamic HQ Enhancer**: Filter audio DSP (EBU R128 Loudnorm -14 LUFS, High-Pass 35Hz mud cut, Vocal presence boost, Crystal Treble sparkle, dan SoX 48kHz upsampling).
 - **📻 Smart Radio Mix & Multi-Band Diversity**: Rekomendasi lagu beraneka ragam anti-monoton & anti-judul kembar memanfaatkan algoritma YouTube Radio Mix (`RD<videoId>`).
-- **📱 Local Wi-Fi QR Code Share**: Bagikan hasil unduhan ke smartphone di jaringan Wi-Fi lokal secara instan cukup dengan scan barcode.
-- **🗄️ SQLite 3 High-Concurrency WAL Mode**: Penyimpanan data riwayat unduhan super cepat dan tahan korupsi menggunakan `better-sqlite3`.
+- **📲 Progressive Web App (PWA) Android Ready**: Dapat langsung dipasang (*install*) ke smartphone Android cukup dengan 1 klik, tampil di Home Screen dan berjalan *fullscreen standalone* seperti aplikasi native tanpa address bar browser.
+- **🛡️ Zero-Crash Pure JS Storage**: Penyimpanan database atomic murni JavaScript yang super cepat, tahan korupsi, dan 100% bebas dari risiko *segmentation fault*.
 - **📦 Multi-Threading & 1-Click ZIP**: Download hingga 8 thread paralel (`-N 8`) dan fitur paket ZIP otomatis.
 
 ---

@@ -326,6 +326,28 @@ Untuk menjamin keamanan pemakaian jangka panjang dan bebas blokir IP:
 
 ---
 
+### 29. 📲 Progressive Web App (PWA) & Instalasi Aplikasi di Android (`https://youtube.iphoenkz.my.id`)
+- **Latar Belakang Permintaan:** Pengguna ingin agar saat mengakses alamat web `https://youtube.iphoenkz.my.id` dari smartphone Android, otomatis ditawarkan untuk memasang (install) aplikasi langsung ke HP. Setelah terpasang, pengguna cukup membuka aplikasi dari layar utama HP (Home Screen) tanpa perlu membuka browser secara manual.
+- **Implementasi Standar PWA Lengkap:**
+  1. **Web App Manifest (`/manifest.json`):**
+     - Nama Aplikasi: `Khanza.NET - YT Downloader Pro` (Short Name: `Khanza YT Pro`).
+     - Display Mode: `standalone` (berjalan fullscreen seperti aplikasi native Android tanpa address bar / bar URL browser).
+     - Theme Color: `#7c3aed`, Background: `#0a0a1a`.
+     - Ikon PWA Standar: Ikon 192x192 PNG, 512x512 PNG, dan vector SVG (`maskable` & `any`).
+  2. **Service Worker Caching (`/sw.js`):**
+     - Mendaftarkan service worker untuk caching static shell (`/`, `/manifest.json`, icon-icon).
+     - Network-first strategy untuk API streaming & endpoint unduhan agar data selalu segar.
+     - Memenuhi seluruh kualifikasi kelayakan instalasi PWA standar Google Chrome di Android.
+  3. **Auto-Install Prompt & Floating Banner:**
+     - Menangkap event `beforeinstallprompt` browser Android.
+     - Memunculkan banner penawaran instalasi estetik melayang di bagian bawah: *"Pasang Aplikasi di HP? Buka instan dari layar utama HP tanpa perlu mengetik di browser!"* dengan tombol **[📥 Pasang]**.
+     - Tombol cepat **`[📲 Pasang di HP]`** di bilah atas (*top bar*) jika banner sempat diabaikan pengguna.
+     - Menyimpan status penutupan di `localStorage` agar tidak mengganggu jika pengguna memilih "Nanti Saja".
+  4. **Standalone App Experience:**
+     - Saat diluncurkan dari icon HP, aplikasi berjalan dalam rasio layar penuh (immersive) dengan tata letak adaptif mobile HP yang responsif dan cepat.
+
+---
+
 ## 5. Ringkasan Endpoint API Backend
 
 | Metode | Rute Endpoint | Deskripsi |
